@@ -205,16 +205,981 @@
 \end_layout
 
 \begin_layout Standard
+לכל עץ 
+\begin_inset Formula $levels$
+\end_inset
 
+ שנחזיק, נשמור מצביע לצומת שמתאים ל
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\numeric on
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+0
+\numeric off
+.
+ נשמור את גודל העץ 
+\begin_inset Formula $size$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $players$
+\end_inset
+
+: 
+\begin_inset Formula $hash\ table$
+\end_inset
+
+ של כל השחקנים במשחק
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $scores$
+\end_inset
+
+: מערך בגודל 
+\begin_inset Formula $scale$
+\end_inset
+
+, בו כל תא ייצג 
+\begin_inset Formula $score$
+\end_inset
+
+ ויחזיק עץ דרגות של 
+\begin_inset Formula $level$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $all\ levels$
+\end_inset
+
+: עץ דרגות שמכיל את כל הרמות, עם מונה שישמור כמה שחקנים עם הרמה הנוכחית
+ נמצאים.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $groups$
+\end_inset
+
+: 
+\begin_inset Formula $union\ find$
+\end_inset
+
+ של קבוצות
+\end_layout
+
+\begin_layout Standard
+בכל קבוצה נחזיק:
+\end_layout
+
+\begin_layout Itemize
+מערך 
+\begin_inset Formula $group\_scores$
+\end_inset
+
+: בגודל 
+\begin_inset Formula $scale$
+\end_inset
+
+, בו כל תא ייצג 
+\begin_inset Formula $score$
+\end_inset
+
+, ויחזיק עץ דרגות של 
+\begin_inset Formula $level$
+\end_inset
+
+, נקרא לו 
+\begin_inset Formula $score\ levels$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $all\ group\ levels$
+\end_inset
+
+: עץ דרגות שיכיל את כל הרמות של שחקנים ששייכים לקבוצה.
 \end_layout
 
 \begin_layout Section*
 סיבוכיות מקום
 \end_layout
 
+\begin_layout Standard
+עבור כל קבוצה נשמור אותה פעם אחת- רק ב 
+\begin_inset Formula $groups$
+\end_inset
+
+.
+ לכל קבוצה נשמור מערך בגודל קבוע, ועצי דרגות שיהיה תלוי במספר הדרגות השונות.
+ מספר הדרגות השונות קטן או שווה ממספר השחקנים.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $players$
+\end_inset
+
+ תלוי במספר השחקנים באופן ליניארי.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $all\_levels$
+\end_inset
+
+ תלוי באופן ליניארי במספר ה
+\begin_inset Formula $levels$
+\end_inset
+
+ השונים.
+\end_layout
+
 \begin_layout Section*
 פונקציות
 \end_layout
 
+\begin_layout Enumerate
+\begin_inset Formula $init$
+\end_inset
+
+: 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נאתחל ב
+\begin_inset Formula $groups$
+\end_inset
+
+ )ה
+\begin_inset Formula $union\_find$
+\end_inset
+
+( את כל אחת מהקבוצות להיות סינגלטון.
+ נשמור את 
+\begin_inset Formula $scale$
+\end_inset
+
+, נייצר בכל אחת מהקבוצות מערך בגודל 
+\begin_inset Formula $scale$
+\end_inset
+
+ של 
+\begin_inset Formula $group\_scores$
+\end_inset
+
+, וניצור את 
+\begin_inset Formula $score\_levels$
+\end_inset
+
+ לכל 
+\begin_inset Formula $score$
+\end_inset
+
+.
+ נאתחל בכל קבוצה גם את 
+\begin_inset Formula $all\_group\_levels$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Enumerate
+נאתחל את 
+\begin_inset Formula $players$
+\end_inset
+
+, את 
+\begin_inset Formula $scores$
+\end_inset
+
+, את 
+\begin_inset Formula $all\_levels$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+בכל קבוצה פעולות ב
+\begin_inset Formula $O(1)$
+\end_inset
+
+, סהכ 
+\begin_inset Formula $k$
+\end_inset
+
+ קבוצות.
+ בנוסף פעולות ב
+\begin_inset Formula $O(1)$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $mergeGroups$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נבצע 
+\begin_inset Formula $union$
+\end_inset
+
+ לקבוצות המתאימות ב 
+\begin_inset Formula $group$
+\end_inset
+
+.
+ ב
+\begin_inset Formula $O(log^{*}(k))$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+נאחד את 
+\begin_inset Formula $all\_group\_levels$
+\end_inset
+
+ של
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\numeric on
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+2
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\numeric off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+הקבוצות ב 
+\begin_inset Formula $O(n)$
+\end_inset
+
+ באלגוריתם שלמדנו בתרגול.
+ נבצע את אותה הפעולה לכל 
+\begin_inset Formula $score$
+\end_inset
+
+ מ
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\numeric on
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+0
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\numeric off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+עד 
+\begin_inset Formula $scale$
+\end_inset
+
+, 
+\begin_inset Formula $scale$
+\end_inset
+
+ קבוע ולכן הסיבוכיות 
+\begin_inset Formula $O(n)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $addPlayer$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נוסיף את השחקן ב
+\begin_inset Formula $O(1)$
+\end_inset
+
+ ל 
+\begin_inset Formula $players$
+\end_inset
+
+)
+\begin_inset Formula $hash\_table$
+\end_inset
+
+(.
+\end_layout
+
+\begin_layout Enumerate
+נמצא את הקבוצה המתאימה לשחקן ב
+\begin_inset Formula $groups$
+\end_inset
+
+: 
+\begin_inset Formula $O(log^{*}k)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+נקדם את המונה המתאים לרמה
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\numeric on
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+0
+\numeric off
+.
+ ב
+\begin_inset Formula $all\_group\_levels$
+\end_inset
+
+.
+ ולעץ המתאים ל
+\begin_inset Formula $score$
+\end_inset
+
+ של השחקן.
+ וב 
+\begin_inset Formula $all\_levels$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $removePlayer$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נמצא את השחקן ב
+\begin_inset Formula $players$
+\end_inset
+
+ ב 
+\begin_inset Formula $O(1)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+נמצא את הקבוצה המתאימה לשחקן ב
+\begin_inset Formula $groups$
+\end_inset
+
+: 
+\begin_inset Formula $O(log^{*}k)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+נקטין את המונה המתאים לרמה של השחקן.
+ אם המונה התאפס נסיר את הרמה מהעץ ב
+\begin_inset Formula $O(logn)$
+\end_inset
+
+.
+ נבצע ב
+\begin_inset Formula $all\_group\_levels$
+\end_inset
+
+ ובעץ המתאים ל
+\begin_inset Formula $score$
+\end_inset
+
+ של השחקן.
+ וב
+\begin_inset Formula $all\_levels$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+נסיר את השחקן ב
+\begin_inset Formula $O(1)$
+\end_inset
+
+ מ 
+\begin_inset Formula $players$
+\end_inset
+
+)
+\begin_inset Formula $hash\_table$
+\end_inset
+
+(.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $increasePlayerIDLevel$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נמצא את השחקן ב
+\begin_inset Formula $players$
+\end_inset
+
+ ב 
+\begin_inset Formula $O(1)$
+\end_inset
+
+ ונעדכן את הרמה שלו.
+\end_layout
+
+\begin_layout Enumerate
+נמצא את הקבוצה של השחקן ב
+\begin_inset Formula $O(log^{*}k)$
+\end_inset
+
+ ב 
+\begin_inset Formula $groups$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Enumerate
+נקטין את המונה המתאים לרמה הישנה של השחקן, אם המונה התאפס נסיר את הרמה מהעץ
+ ב
+\begin_inset Formula $O(logn)$
+\end_inset
+
+.
+ נקדם את המונה המתאים לרמה החדשה של השחקן ב 
+\begin_inset Formula $O(logn)$
+\end_inset
+
+.
+ נבצע ב
+\begin_inset Formula $all\_group\_levels$
+\end_inset
+
+ ובעץ המתאים ל
+\begin_inset Formula $score$
+\end_inset
+
+ של השחקן.
+ וב
+\begin_inset Formula $all\_levels$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+בונוס:
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $changePlayerIDScore$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נמצא את השחקן ב
+\begin_inset Formula $players$
+\end_inset
+
+ ב 
+\begin_inset Formula $O(1)$
+\end_inset
+
+ ונעדכן את תוצאה שלו.
+\end_layout
+
+\begin_layout Enumerate
+נמצא את הקבוצה של השחקן ב
+\begin_inset Formula $O(log^{*}k)$
+\end_inset
+
+ ב 
+\begin_inset Formula $groups$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Enumerate
+נקטין את המונה המתאים לרמה של השחקן עבור ה 
+\begin_inset Formula $score$
+\end_inset
+
+ הישן, אם המונה התאפס נסיר את הרמה מהעץ ב
+\begin_inset Formula $O(logn)$
+\end_inset
+
+.
+ נקדם את המונה המתאים לרמה של השחקן עבור ה 
+\begin_inset Formula $score$
+\end_inset
+
+ החדש 
+\begin_inset Formula $O(logn)$
+\end_inset
+
+.
+ בעץ המתאים ל
+\begin_inset Formula $score$
+\end_inset
+
+ של השחקן ב 
+\begin_inset Formula $group\_scores$
+\end_inset
+
+.
+ נבצע את אותה הפעולה על העץ 
+\begin_inset Formula $scores$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $getPercentOfPlayersWithScoreInBounds$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נמצא את הקבוצה )אם 
+\begin_inset Formula $group\_id$
+\end_inset
+
+==
+\numeric on
+0
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\numeric off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+אז 
+\begin_inset Formula $O(1)$
+\end_inset
+
+( אחרת 
+\begin_inset Formula $O(log^{*}k)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+נגדיר פונקציית עזר שסוכמת את מספר השחקנים מרמה 
+\begin_inset Formula $0$
+\end_inset
+
+ עד רמה 
+\begin_inset Formula $level$
+\end_inset
+
+.
+ נציין כי עץ הדרגות לא סופר את כמות האנשים ברמה
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\numeric on
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+0
+\numeric off
+, הפונקציה תסכום גם את מספר זה)יש לנו מצביע אליו(.
+ ב
+\begin_inset Formula $O(logn)$
+\end_inset
+
+ כמו שראינו בהרצאה.
+\end_layout
+
+\begin_layout Enumerate
+נעשה את זה עבור
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\begin_inset Formula $[0,lower]$
+\end_inset
+
+ ועבור 
+\begin_inset Formula $[0,higher]$
+\end_inset
+
+ ונחסר בין התוצאות.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $averageHighestPlayerLevelByGroup$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נמצא את הקבוצה )אם 
+\begin_inset Formula $group\_id$
+\end_inset
+
+==
+\numeric on
+0
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\numeric off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+אז 
+\begin_inset Formula $O(1)$
+\end_inset
+
+( אחרת 
+\begin_inset Formula $O(log^{*}k)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+נמצא את הצומת שדרגתו 
+\begin_inset Formula $size-m$
+\end_inset
+
+.
+ נסכום את הרמות של אלו שיותר גדולים ממנו )בכל צומת נשמור את סכום הדרגות
+ ולכן במעבר אחד משורש העץ עד לצומת נוכל למצוא את הסכום הזה( ב
+\begin_inset Formula $O(logn)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+נחלק את הסכום ב 
+\begin_inset Formula $m$
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+בונוס:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נמצא בעץ הרמות של הקבוצה את הרמה המינימלית 
+\begin_inset Formula $min\_level$
+\end_inset
+
+ עבורה יש 
+\begin_inset Formula $m$
+\end_inset
+
+ שחקנים עם רמה יותר גבוהה)או שווה(.
+ נמצא כמה שחקנים יש עם רמה גדולה ממש מהמינימלית 
+\begin_inset Formula $b$
+\end_inset
+
+.
+ נוכל לחשב כמה בדיוק יש ברמה המינימלית, וכמה בדיוק צריך מהרמה המינימלית
+ 
+\begin_inset Formula $a$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+נלך לתא במערך של ה
+\begin_inset Formula $score$
+\end_inset
+
+ הנוכחי ונסתכל על העץ שבו נמצא את מספר השחקנים הגדולים ממש מהרמה המינימלית)עבור
+ ה
+\begin_inset Formula $score$
+\end_inset
+
+ הנוכחי( 
+\begin_inset Formula $c$
+\end_inset
+
+ ואת מספר השחקנים בדיוק ברמה המינימלית 
+\begin_inset Formula $d$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+נחשב
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $TODO$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $Quit$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+נשחרר את כל הזיכרון, חישבנו כבר כי הוא תלוי לינארית במספר הקבוצות ובמספר
+ השחקנים.
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
