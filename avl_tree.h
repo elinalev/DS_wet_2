@@ -6,86 +6,88 @@
 #include "library2.h"
 
 
-template<class T, class S>
 class AvlTree{
 private:
 
     /// properties
-    std::shared_ptr<TreeNode<T,S>> root;
+    std::shared_ptr<TreeNode> root;
+    std::shared_ptr<int>  zero;
     int size;
 
     /// functions
     // creates a full avl tree of size with empty keys
-    static std::shared_ptr<TreeNode<T,S>> create_half_full_avl_tree(int height, int full_size, int size, T key_arr[], S val_arr[], int* index);
+    static std::shared_ptr<TreeNode> create_half_full_avl_tree(int full_size, int size, int key_arr[], int val_arr[], int* index);
     // returns the parent of this key (or the place is should be added), or null if it is the root
-    std::shared_ptr<TreeNode<T,S>> find(T key);
+    std::shared_ptr<TreeNode> find( int  key);
 
-    StatusType inner_get_inorder(std::shared_ptr<TreeNode<T,S>> node, int number_of_nodes,T key_arr[],
-                                 S val_arr[], int *index);
+    StatusType inner_get_inorder(std::shared_ptr<TreeNode> node, int number_of_nodes, int  key_arr[],
+                                 int val_arr[], int *index) const;
 
     // using inner_add assumes the node is not in the tree
-    std::shared_ptr<TreeNode<T,S>> inner_add(std::shared_ptr<TreeNode<T,S>> upper_node, std::shared_ptr<TreeNode<T,S>> node_to_put);
+    std::shared_ptr<TreeNode> inner_add(std::shared_ptr<TreeNode> upper_node, std::shared_ptr<TreeNode> node_to_put);
 
     //get node nd and return the node to left or right accordingly
-    static std::shared_ptr<TreeNode<T,S>> LL_rotate(std::shared_ptr<TreeNode<T,S>> node_to_rotate);
-    static std::shared_ptr<TreeNode<T,S>> RR_rotate(std::shared_ptr<TreeNode<T,S>> node_to_rotate);
-    static std::shared_ptr<TreeNode<T,S>> LR_rotate(std::shared_ptr<TreeNode<T,S>> node_to_rotate);
-    static std::shared_ptr<TreeNode<T,S>> RL_rotate(std::shared_ptr<TreeNode<T,S>> node_to_rotate);
-    S innerGetMax(std::shared_ptr<TreeNode<T,S>>);
+    static std::shared_ptr<TreeNode> LL_rotate(std::shared_ptr<TreeNode> node_to_rotate);
+    static std::shared_ptr<TreeNode> RR_rotate(std::shared_ptr<TreeNode> node_to_rotate);
+    static std::shared_ptr<TreeNode> LR_rotate(std::shared_ptr<TreeNode> node_to_rotate);
+    static std::shared_ptr<TreeNode> RL_rotate(std::shared_ptr<TreeNode> node_to_rotate);
+    int innerGetMax(std::shared_ptr<TreeNode>);
 
 
     // inner function for removing nodes from the tree
-    void removeLeaf(std::shared_ptr<TreeNode<T,S>>* parent_ptr);
-    void removeNodeWithOnlyOneChild(std::shared_ptr<TreeNode<T,S>>* parent_ptr,
-                                    std::shared_ptr<TreeNode<T,S>> current);
-    void removeNodeWithTwoChildren(std::shared_ptr<TreeNode<T,S>> node_to_remove);
+    void removeLeaf(std::shared_ptr<TreeNode>* parent_ptr);
+    void removeNodeWithOnlyOneChild(std::shared_ptr<TreeNode>* parent_ptr,
+                                    std::shared_ptr<TreeNode> current);
+    void removeNodeWithTwoChildren(std::shared_ptr<TreeNode> node_to_remove);
     void removeRoot();
 
-    std::shared_ptr<TreeNode<T,S>> fixBalanceFactor(std::shared_ptr<TreeNode<T,S>> upper_node, T parent_key);
+    std::shared_ptr<TreeNode> fixBalanceFactor(std::shared_ptr<TreeNode> upper_node, int parent_key);
 
 public:
 
     // getter functions
-    int get_size(){
+    int get_size() const{
         return this->size;
     }
-    S get_max();
-    static AvlTree<T,S> merge(AvlTree<T,S> tree1, AvlTree<T,S> tree2);
+    int get_max();
+    static AvlTree merge(const AvlTree& tree1, const AvlTree& tree2);
     // constructors
-    AvlTree():root(nullptr), size(0){};
+    AvlTree():root(std::make_shared<TreeNode>(0)),zero(std::make_shared<int>(root->value)), size(0){};
     // basic tree operations
-    StatusType add(T key, S value);
-    std::shared_ptr<TreeNode<T,S>> get(T key); // returns null if the key isn't in the tree
-    StatusType remove(T key); // does nothing if the key doesn't exists in the tree
+    StatusType add( int  key, int value);
+    StatusType add_0();
+    std::shared_ptr<TreeNode> get( int  key); // returns null if the key isn't in the tree
+    StatusType remove( int  key); // does nothing if the key doesn't exists in the tree
+    //use that function to reduce the counter of a node, will remove it if gets empty.
+    StatusType reduce_val(int key);
     bool is_empty();
 
     // inorder functions
-    StatusType get_inorder(int number_of_nodes,T key_arr[], S val_arr[]);
+    StatusType get_inorder(int number_of_nodes, int  key_arr[], int val_arr[]) const;
     friend int main();
-    friend void print_tree(std::shared_ptr<TreeNode<T, S>> node);
+    friend void print_tree(std::shared_ptr<TreeNode> node);
 };
 
 
-template<class T, class S>
-bool AvlTree<T,S>::is_empty(){
+
+bool AvlTree::is_empty(){
     return (root == nullptr) || (size == 0);
 }
 
-template<class T , class S>
-S AvlTree<T,S>::get_max(){
+int  AvlTree::get_max(){
     return innerGetMax(root);
 }
 
-template<class T, class S>
-S AvlTree<T,S>::innerGetMax(std::shared_ptr<TreeNode<T,S>> nod){
+
+int  AvlTree::innerGetMax(std::shared_ptr<TreeNode> nod){
     if(nod == nullptr || nod ->right == nullptr)
         return nod->value;
     return innerGetMax(nod->right);
 }
 
-template<class T, class S>
-std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::get(T key){
-    std::shared_ptr<TreeNode<T,S>> parent = find(key);
+
+std::shared_ptr<TreeNode> AvlTree::get( int  key){
+    std::shared_ptr<TreeNode> parent = find(key);
     if(parent == nullptr)
         return root;
 
@@ -99,8 +101,8 @@ std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::get(T key){
 
 }
 
-template<class T, class S>
-std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::inner_add(std::shared_ptr<TreeNode<T,S>> upper_node, std::shared_ptr<TreeNode<T,S>> node_to_put) {
+
+std::shared_ptr<TreeNode> AvlTree::inner_add(std::shared_ptr<TreeNode> upper_node, std::shared_ptr<TreeNode> node_to_put) {
     // This is the first node added to the tree
     if(size == 0 && node_to_put != nullptr && upper_node == nullptr){
         return node_to_put;
@@ -132,12 +134,17 @@ std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::inner_add(std::shared_ptr<TreeNode<
 }
 
 
-template<class T, class S>
-void merge(T key_arr[], T key_arr1[],T key_arr2[], S val_arr[],
-           S val_arr1[], S val_arr2[], int size1, int size2){
-    int p1 = 0, p2 = 0, p_new = 0;
+
+int merge_arr(int  key_arr[], int key_arr1[], int  key_arr2[], int val_arr[],
+           int val_arr1[], int val_arr2[], int size1, int size2){
+    int p1 = 0, p2 = 0, p_new = 0, new_size = 0;
     while(p1<size1 && p2<size2) {
-        if (key_arr1[p1] < key_arr2[p2]) {
+        new_size++;
+        if (key_arr1[p1] == key_arr2[p2]){
+            key_arr[p_new] = key_arr1[p1];
+            val_arr[p_new++] = val_arr1[p1++] + val_arr2[p2++];
+        }
+        else if (key_arr1[p1] < key_arr2[p2]) {
             key_arr[p_new] = key_arr1[p1];
             val_arr[p_new++] = val_arr1[p1++];
         } else {
@@ -146,48 +153,68 @@ void merge(T key_arr[], T key_arr1[],T key_arr2[], S val_arr[],
         }
     }
     while(p1<size1){
+        new_size++;
         key_arr[p_new] = key_arr1[p1];
         val_arr[p_new++] = val_arr1[p1++];
     }
     while(p2<size2){
+        new_size++;
         key_arr[p_new] = key_arr2[p2];
         val_arr[p_new++] = val_arr2[p2++];
     }
+    return new_size;
+}
+AvlTree AvlTree::merge(const AvlTree& tree1, const AvlTree& tree2){
+    int size1 = tree1.get_size(), size2 = tree2.get_size(), index = 0;
+    int val_arr1[size1], key_arr1[size1], val_arr2[size2], key_arr2[size2], key_arr[size1+size2], val_arr[size1+size2];
+    StatusType status;
+    status = tree1.get_inorder(size1, key_arr1, val_arr1);
+    tree2.get_inorder(size2, key_arr2, val_arr2);
+    int size = merge_arr(key_arr, key_arr1, key_arr2, val_arr, val_arr1, val_arr2, size1, size2);
+
+    AvlTree tree;
+    tree.root = create_half_full_avl_tree(find_pow_of_2(size)-1, size, key_arr, val_arr, &index);
+    tree.size = size;
+    tree.zero = std::make_shared<int>((tree.get(0))->value);
+    return tree;
 }
 
 
-template<class T, class S>
-AvlTree<T,S> merge(AvlTree<T,S> tree1, AvlTree<T,S> tree2){
-    T key_arr1[tree1.size], val_arr1[tree1.size];
-    S key_arr2[tree2.size], val_arr2[tree2.size];
-    tree1.get_inorder(tree1.size, key_arr1, val_arr1);
-    tree2.get_inorder(tree2.size, key_arr2, val_arr2);
-}
-
-template<class T, class S>
-StatusType AvlTree<T,S>::add(T key, S value){
-    if(this->get(key) != nullptr)
+StatusType AvlTree::add_0(){
+    if(zero){
+        (*zero)++;
+    } else
         return FAILURE;
+    return SUCCESS;
+}
+/*
+
+StatusType AvlTree::add( int  key, int value){
+    TreeNode right_one = this->get(key);
+    if(right_one != nullptr) {
+        right_one.value++;
+        return SUCCESS;
+    }
     try {
-        std::shared_ptr<TreeNode<T, S>> new_node = std::make_shared<TreeNode<T, S>>();
+        std::shared_ptr<TreeNode> new_node = std::make_shared<TreeNode>();
         new_node->key = key;
         new_node->value = value;
-        this->root = AvlTree<T, S>::inner_add(root, new_node);
+        this->root = AvlTree::inner_add(root, new_node);
     }catch(const std::bad_alloc&){
         return ALLOCATION_ERROR;
     }
     size++;
     return SUCCESS;
-}
+}*/
 
 
-template<class T, class S>
-std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::find(T key){
+
+std::shared_ptr<TreeNode> AvlTree::find( int  key){
 
     if(this->root == nullptr || this->root->key == key)
         return nullptr;
 
-    std::shared_ptr<TreeNode<T, S>> curr = this->root, next = curr->right;
+    std::shared_ptr<TreeNode> curr = this->root, next = curr->right;
     if(this->root->key > key)
         next = this->root->left;
 
@@ -203,9 +230,9 @@ std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::find(T key){
     return curr;
 }
 
-template<class T, class S>
-StatusType AvlTree<T,S>::inner_get_inorder(std::shared_ptr<TreeNode<T,S>> node,
-                                           int number_of_nodes,T key_arr[], S val_arr[], int *index){
+
+StatusType AvlTree::inner_get_inorder(std::shared_ptr<TreeNode> node,
+                                           int number_of_nodes, int  key_arr[], int val_arr[], int *index) const{
 
     if(node == nullptr)
         return SUCCESS;
@@ -228,8 +255,8 @@ StatusType AvlTree<T,S>::inner_get_inorder(std::shared_ptr<TreeNode<T,S>> node,
     return SUCCESS;
 }
 
-template<class T, class S>
-StatusType AvlTree<T,S>::get_inorder(int number_of_nodes,T key_arr[], S val_arr[]){
+
+StatusType AvlTree::get_inorder(int number_of_nodes, int  key_arr[], int val_arr[]) const{
     int index = 0;
     return inner_get_inorder(this->root, number_of_nodes, key_arr, val_arr, &index);
 }
@@ -237,44 +264,63 @@ StatusType AvlTree<T,S>::get_inorder(int number_of_nodes,T key_arr[], S val_arr[
 
 
 
-template<class T,class S>
-std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::create_half_full_avl_tree
-(int height, int full_size, int size, T key_arr[], S val_arr[], int* index){
-    std::shared_ptr<TreeNode<T,S>> new_node = std::make_shared<TreeNode<T,S>>();
+std::shared_ptr<TreeNode> AvlTree::create_half_full_avl_tree
+(int full_size, int size, int key_arr[], int val_arr[], int* index){
+    std::shared_ptr<TreeNode> new_node = std::make_shared<TreeNode>(-1);
+    if(size == 0)
+        return nullptr;
     if(size <= 1){
         new_node->height = 0;
-        new_node->size_of_subtree = 1;
         new_node->sum_of_subtree = key_arr[*index] * val_arr[*index];
         new_node->key = key_arr[*index];
         new_node->value = val_arr[(*index)++];
+        new_node->size_of_subtree = new_node->value;
         return new_node;
     }
-    int full_son/*without leaves*/ =(((full_size-1)/2)-1)/2;
-    int leaves = full_son + 1;
-    int size_of_left = 2 * full_son + leaves < size? full_son + leaves : full_son + 2* leaves - (full_size - size);
-    new_node->left = AvlTree<T, S>::create_half_full_avl_tree(height - 1, (full_size - 1) / 2,
+    int size_of_left, full_size_of_right;
+    int full_son/*without leaves*/ =(((full_size-1)/2)-1)/2, leaves/*of full son*/ = full_son + 1;
+    if(2 * full_son + leaves < size){
+        size_of_left = full_son + leaves;
+        full_size_of_right = (full_size -1)/2;
+    }
+    else if(2 * full_son + leaves == size){
+        size_of_left = full_son + leaves;
+        full_size_of_right = full_son;
+    }
+    else{
+        size_of_left = full_son + 2*leaves - (full_size - size);
+        full_size_of_right = full_son;
+    }
+
+    new_node->left = AvlTree::create_half_full_avl_tree((full_size - 1) / 2,
                                                               size_of_left, key_arr, val_arr, index);
     new_node->key = key_arr[*index];
     new_node->value = val_arr[(*index)++];
-    new_node->right = AvlTree<T, S>::create_half_full_avl_tree(height-1, (full_size - 1) / 2,
+    new_node->right = AvlTree::create_half_full_avl_tree(full_size_of_right,
                                                                size-1-size_of_left, key_arr, val_arr, index);
-    new_node->height = max(new_node->left->height, new_node->right->height) + 1;
-    new_node->size_of_subtree = (new_node->right? new_node->right->size_of_subtree : 0)
-                                  + (new_node->left? new_node->left->size_of_subtree : 0) + 1;
-    new_node->sum_of_subtree = (new_node->right? new_node->right->sum_of_subtree : 0)
-                                 + (new_node->left? new_node->left->sum_of_subtree : 0)
-                                 + ((new_node->key) * (new_node->value));
+
+    int left_height = new_node->left? new_node->left->height : -1;
+    int right_height = new_node->right? new_node->right->height : -1;
+    new_node->height = max(left_height, right_height) + 1;
+
+    int left_size = new_node->left? new_node->left->size_of_subtree : 0;
+    int right_size = new_node->right? new_node->right->size_of_subtree : 0;
+    new_node->size_of_subtree = left_size + right_size + new_node->value;
+
+    int left_sum = new_node->left? new_node->left->sum_of_subtree : 0;
+    int right_sum = new_node->right? new_node->right->sum_of_subtree : 0;
+    new_node->sum_of_subtree = left_sum + right_sum + ((new_node->key) * (new_node->value));
     return new_node;
 }
 
 
 
 
-template<class T, class S>
-std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::LL_rotate(std::shared_ptr<TreeNode<T,S>> node_to_rotate){
+
+std::shared_ptr<TreeNode> AvlTree::LL_rotate(std::shared_ptr<TreeNode> node_to_rotate){
     if(node_to_rotate == nullptr || node_to_rotate->left == nullptr)
         return nullptr;
-    std::shared_ptr<TreeNode<T,S>> left = node_to_rotate->left;
+    std::shared_ptr<TreeNode> left = node_to_rotate->left;
     node_to_rotate->left = left->right;
     left->right = node_to_rotate;
     node_to_rotate->height = node_to_rotate->cal_height_non_recursive();
@@ -282,11 +328,11 @@ std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::LL_rotate(std::shared_ptr<TreeNode<
     return left;
 }
 
-template<class T, class S>
-std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::RR_rotate(std::shared_ptr<TreeNode<T,S>> node_to_rotate){
+
+std::shared_ptr<TreeNode> AvlTree::RR_rotate(std::shared_ptr<TreeNode> node_to_rotate){
     if(node_to_rotate == nullptr || node_to_rotate->right == nullptr)
         return nullptr;
-    std::shared_ptr<TreeNode<T,S>> right = node_to_rotate->right;
+    std::shared_ptr<TreeNode> right = node_to_rotate->right;
     node_to_rotate->right = right->left;
     right->left = node_to_rotate;
     node_to_rotate->height = node_to_rotate->cal_height_non_recursive();
@@ -294,32 +340,32 @@ std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::RR_rotate(std::shared_ptr<TreeNode<
     return right;
 }
 
-template<class T, class S>
-std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::RL_rotate(std::shared_ptr<TreeNode<T,S>> node_to_rotate){
+
+std::shared_ptr<TreeNode> AvlTree::RL_rotate(std::shared_ptr<TreeNode> node_to_rotate){
     if(node_to_rotate == nullptr || node_to_rotate->right == nullptr||node_to_rotate->right->left == nullptr)
         return nullptr;
     node_to_rotate->right = LL_rotate(node_to_rotate->right);
     return RR_rotate(node_to_rotate);
 }
 
-template<class T, class S>
-std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::LR_rotate(std::shared_ptr<TreeNode<T,S>> node_to_rotate){
+
+std::shared_ptr<TreeNode> AvlTree::LR_rotate(std::shared_ptr<TreeNode> node_to_rotate){
     if(node_to_rotate == nullptr || node_to_rotate->left == nullptr||node_to_rotate->left->right == nullptr)
         return nullptr;
     node_to_rotate->left = RR_rotate(node_to_rotate->left);
     return LL_rotate(node_to_rotate);
 }
 
-template<class T, class S>
-void AvlTree<T,S>::removeLeaf(std::shared_ptr<TreeNode<T,S>>* parent_ptr)
+
+void AvlTree::removeLeaf(std::shared_ptr<TreeNode>* parent_ptr)
 {
     (*parent_ptr) = nullptr;
     size--;
 }
 
-template<class T, class S>
-void AvlTree<T,S>::removeNodeWithOnlyOneChild(std::shared_ptr<TreeNode<T,S>>* parent_ptr,
-                                              std::shared_ptr<TreeNode<T,S>> current){
+
+void AvlTree::removeNodeWithOnlyOneChild(std::shared_ptr<TreeNode>* parent_ptr,
+                                              std::shared_ptr<TreeNode> current){
     // left child exists
     if(!(current->right) && current->left)
     {
@@ -337,8 +383,8 @@ void AvlTree<T,S>::removeNodeWithOnlyOneChild(std::shared_ptr<TreeNode<T,S>>* pa
 }
 
 
-template<class T, class S>
-void AvlTree<T,S>::removeNodeWithTwoChildren(std::shared_ptr<TreeNode<T,S>> node_to_remove){
+
+void AvlTree::removeNodeWithTwoChildren(std::shared_ptr<TreeNode> node_to_remove){
     // step 1: find the replacement node (go right and then all the way left)
     auto replacement_node = node_to_remove->right;
     auto replacement_node_parent = node_to_remove;
@@ -353,7 +399,7 @@ void AvlTree<T,S>::removeNodeWithTwoChildren(std::shared_ptr<TreeNode<T,S>> node
     node_to_remove->value = replacement_node->value;
 
     // step 3: remove the replacement_node from its original place
-    std::shared_ptr<TreeNode<T,S>> *replacement_node_parent_ptr;
+    std::shared_ptr<TreeNode> *replacement_node_parent_ptr;
     if(replacement_node_parent->right && (replacement_node_parent->right->key == replacement_node->key))
     {
         replacement_node_parent_ptr = &(replacement_node_parent->right);
@@ -371,8 +417,8 @@ void AvlTree<T,S>::removeNodeWithTwoChildren(std::shared_ptr<TreeNode<T,S>> node
 }
 
 
-template<class T, class S>
-void AvlTree<T,S>::removeRoot() {
+
+void AvlTree::removeRoot() {
     if(!(root->right) && !(root->left)){
         root = nullptr;
         size--;
@@ -392,8 +438,8 @@ void AvlTree<T,S>::removeRoot() {
     }
 }
 
-template<class T, class S>
-std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::fixBalanceFactor(std::shared_ptr<TreeNode<T,S>> upper_node, T parent_key)
+
+std::shared_ptr<TreeNode> AvlTree::fixBalanceFactor(std::shared_ptr<TreeNode> upper_node, int parent_key)
 {
     // recurse until we find the parent
     if (upper_node.get()->key < parent_key)
@@ -422,11 +468,26 @@ std::shared_ptr<TreeNode<T,S>> AvlTree<T,S>::fixBalanceFactor(std::shared_ptr<Tr
 }
 
 
-template<class T, class S>
-StatusType AvlTree<T,S>::remove(T key){
-    std::shared_ptr<TreeNode<T,S>> parent = find(key);
-    std::shared_ptr<TreeNode<T,S>>* parent_ptr;
-    std::shared_ptr<TreeNode<T,S>> current;
+
+StatusType AvlTree::remove(int key){
+    std::shared_ptr<TreeNode> current = get(key);
+    if(current == nullptr){
+        return FAILURE;
+    }
+    else if(current->value >= 2){
+        current->value--;
+        root = fixBalanceFactor(root, key);
+        return SUCCESS;
+    }
+    else if(current->key == 0){
+        if(current->value == 1){
+            current->value--;
+            return SUCCESS;
+        }
+        return FAILURE;
+    }
+    std::shared_ptr<TreeNode> parent = find(key);
+    std::shared_ptr<TreeNode>* parent_ptr;
 
     if(parent == nullptr){
         // no need to fix the tree if we removed the root
@@ -455,6 +516,22 @@ StatusType AvlTree<T,S>::remove(T key){
     }
 
     root = fixBalanceFactor(root, parent.get()->key);
+    return SUCCESS;
+}
+
+StatusType AvlTree::reduce_val(int key){
+    std::shared_ptr<TreeNode> nod = get(key);
+    if(nod == nullptr)
+        return INVALID_INPUT;
+    else if(nod->key == 0){
+        if(nod->value <= 0)
+            return INVALID_INPUT;
+        nod->value--;
+        return SUCCESS;
+    }
+    nod->value--;
+    if(nod->value <= 0)
+        return remove(key);
     return SUCCESS;
 }
 
