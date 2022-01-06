@@ -4,24 +4,24 @@
 #include <memory>
 #include "utils.h"
 
-class TreeNode{
+class RankTreeNode{
 public:
     int key;
     int value;
-    std::shared_ptr<TreeNode> right, left;
+    std::shared_ptr<RankTreeNode> right, left;
     int height;
     int size_of_subtree;
     int sum_of_subtree;
 
-    explicit TreeNode(int key);
+    explicit RankTreeNode(int key);
 
-    bool operator==(const TreeNode& other) const{
+    bool operator==(const RankTreeNode& other) const{
         return other.key == key;
     }
-    bool operator>(const TreeNode& other) const{
+    bool operator>(const RankTreeNode& other) const{
         return key > other.key;
     }
-    bool operator<(const TreeNode& other) const{
+    bool operator<(const RankTreeNode& other) const{
         return key < other.key;
     }
 
@@ -37,6 +37,6 @@ public:
     }
 };
 
-TreeNode::TreeNode(int key) :right(nullptr), left(nullptr), height(0),key(key), value(0), size_of_subtree(0), sum_of_subtree(0){}
+RankTreeNode::RankTreeNode(int key) : right(nullptr), left(nullptr), height(0), key(key), value(0), size_of_subtree(0), sum_of_subtree(0){}
 
 #endif //DS_WET_1_TREE_NODE_H
