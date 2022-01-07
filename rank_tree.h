@@ -1,12 +1,13 @@
 #ifndef DS_WET_1_AVL_TREE_H
 #define DS_WET_1_AVL_TREE_H
 
+#include <iostream>
 #include "rank_tree_node.h"
 #include "utils.h"
 #include "library2.h"
 #define MIN_COUNT 1
 
-class rank_tree{
+class RankTree{
 private:
 
     /// properties
@@ -15,15 +16,23 @@ private:
     int size;
 
     /// functions
-    // creates a full avl tree of size with empty keys
+    /// create a half full tree, with keys and values from parameters
+    /// \param full_size - size of minimal full tree, beggier then size
+    /// \param size - number of nodes in tree
+    /// \param key_arr - keys, from smaller to bigger
+    /// \param val_arr - values, each one relates to the key of the same index
+    /// \param index - int pointer, used among all levels of recursion
+    /// \return new half full node
     static std::shared_ptr<RankTreeNode> create_half_full_avl_tree(int full_size, int size, int key_arr[], int val_arr[], int* index);
+
     // returns the parent of this key (or the place is should be added), or null if it is the root
     std::shared_ptr<RankTreeNode> find(int  key);
 
+    //assists with get_inorder
     StatusType inner_get_inorder(std::shared_ptr<RankTreeNode> node, int number_of_nodes, int  key_arr[],
                                  int val_arr[], int *index) const;
 
-    // using inner_add assumes the node is not in the tree
+    //assist with add
     std::shared_ptr<RankTreeNode> inner_add(std::shared_ptr<RankTreeNode> upper_node, std::shared_ptr<RankTreeNode> node_to_put);
 
     //get node nd and return the node to left or right accordingly
@@ -31,7 +40,6 @@ private:
     static std::shared_ptr<RankTreeNode> RR_rotate(std::shared_ptr<RankTreeNode> node_to_rotate);
     static std::shared_ptr<RankTreeNode> LR_rotate(std::shared_ptr<RankTreeNode> node_to_rotate);
     static std::shared_ptr<RankTreeNode> RL_rotate(std::shared_ptr<RankTreeNode> node_to_rotate);
-    int innerGetMax(std::shared_ptr<RankTreeNode>);
 
 
     // inner function for removing nodes from the tree
@@ -40,53 +48,81 @@ private:
                                     std::shared_ptr<RankTreeNode> current);
     void removeNodeWithTwoChildren(std::shared_ptr<RankTreeNode> node_to_remove);
     void removeRoot();
-
+    int inner_get_rank(int key, std::shared_ptr<RankTreeNode> node);
+    int inner_get_sum(int key, std::shared_ptr<RankTreeNode> node);
     std::shared_ptr<RankTreeNode> fixBalanceFactor(std::shared_ptr<RankTreeNode> upper_node, int parent_key);
 
 public:
+    //todo: remove test fuctions
+    int inner_get_height(std::shared_ptr<RankTreeNode> nod){
+        if(nod)
+            return 1 + max(inner_get_height(nod->left), inner_get_height(nod->right));
+        return -1;
+    }
+    int get_height() {return inner_get_height(root);}
+    bool inner_compare_tree_inorder(std::shared_ptr<RankTreeNode> nod, int arr[], int* index){
+        if(!nod)
+            return true;
+        if (!inner_compare_tree_inorder(nod->left, arr, index))
+            return false;
+        if(nod->value == 0)
+            return inner_compare_tree_inorder(nod->right, arr, index);
+        if(nod->key != arr[(*index)++])
+            return false;
+        return inner_compare_tree_inorder(nod->right, arr, index);
+
+        remove(nod->key);
+    }
+    bool compare_tree_inorder(int arr[]){
+        int index = 0;
+        return inner_compare_tree_inorder(root, arr, &index);
+    }
+    void inner_do_inorder(void(fun)(std::shared_ptr<RankTreeNode>), std::shared_ptr<RankTreeNode> nod){
+        if(nod){
+            inner_do_inorder(fun, nod->left);
+            fun(nod);
+        }
+    }
+    void do_inorder(void(fun)(std::shared_ptr<RankTreeNode>)){
+        inner_do_inorder(fun, root);
+    }
 
     // getter functions
     int get_size() const{
         return this->size;
     }
-    int get_max();
-    static rank_tree merge(const rank_tree& tree1, const rank_tree& tree2);
+
+    //return the number of values smaller(not equal!) to a specific key
+    int get_rank(int key);
+
+    //return the sum of all values with smaller(not equal) keys
+    int get_sum(int key);
+    static RankTree merge(const RankTree& tree1, const RankTree& tree2);
     // constructors
-    rank_tree(): root(std::make_shared<RankTreeNode>(0)), zero(&(root->value)), size(0){};
+    RankTree(): root(std::make_shared<RankTreeNode>(0)), zero(&(root->value)), size(0){};
+
     // basic tree operations
     StatusType add(int  key);
     StatusType add_0();
     std::shared_ptr<RankTreeNode> get(int  key); // returns null if the key isn't in the tree
     StatusType remove( int  key); // does nothing if the key doesn't exists in the tree
-    //use that function to reduce the counter of a node, will remove it if gets empty.
-    StatusType reduce_val(int key);
-    bool is_empty();
 
-    // inorder functions
+
+    // fill the arrays with correct keys and values
     StatusType get_inorder(int number_of_nodes, int  key_arr[], int val_arr[]) const;
+
+    ///TODO: friends for testing, remove after
     friend int main();
     friend void print_tree(std::shared_ptr<RankTreeNode> node);
-};
+    friend void TEST_balanceFactor();
+    };
 
 
 
-bool rank_tree::is_empty(){
-    return (root == nullptr) || (size == 0);
-}
-
-int  rank_tree::get_max(){
-    return innerGetMax(root);
-}
 
 
-int  rank_tree::innerGetMax(std::shared_ptr<RankTreeNode> nod){
-    if(nod == nullptr || nod ->right == nullptr)
-        return nod->value;
-    return innerGetMax(nod->right);
-}
 
-
-std::shared_ptr<RankTreeNode> rank_tree::get(int  key){
+std::shared_ptr<RankTreeNode> RankTree::get(int  key){
     std::shared_ptr<RankTreeNode> parent = find(key);
     if(parent == nullptr)
         return root;
@@ -101,8 +137,32 @@ std::shared_ptr<RankTreeNode> rank_tree::get(int  key){
 
 }
 
+int RankTree::inner_get_rank(int key, std::shared_ptr<RankTreeNode> node){
+    if(!node)
+        return 0;
+    if(node-> key > key)
+        return inner_get_rank(key, node->left);
+    int left_and_val = (node->key != 0 ? node->value : 0) + (node->left? node->left->size_of_subtree : 0);
+    return left_and_val + inner_get_rank(key, node->right);
+}
 
-std::shared_ptr<RankTreeNode> rank_tree::inner_add(std::shared_ptr<RankTreeNode> upper_node, std::shared_ptr<RankTreeNode> node_to_put) {
+int RankTree::get_rank(int key){
+    return *zero + inner_get_rank(key, root);
+}
+
+int RankTree::inner_get_sum(int key, std::shared_ptr<RankTreeNode> node){
+    if(!node)
+        return 0;
+    if(node-> key >= key)
+        return inner_get_sum(key, node->left);
+    int left_and_sum = (node->key * node->value) + (node->left? node->left->sum_of_subtree : 0);
+    return left_and_sum + inner_get_sum(key, node->right);
+}
+int RankTree::get_sum(int key){
+    return inner_get_sum(key, root);
+}
+
+std::shared_ptr<RankTreeNode> RankTree::inner_add(std::shared_ptr<RankTreeNode> upper_node, std::shared_ptr<RankTreeNode> node_to_put) {
     // This is the first node added to the tree
     if(size == 0 && node_to_put != nullptr && upper_node == nullptr){
         return node_to_put;
@@ -114,6 +174,9 @@ std::shared_ptr<RankTreeNode> rank_tree::inner_add(std::shared_ptr<RankTreeNode>
     // save the node in the right place (no pun intended)
     if (*upper_node < *node_to_put)
         upper_node->right = upper_node->right ? inner_add(upper_node->right, node_to_put) : node_to_put;
+    else if(*upper_node == *node_to_put){
+        upper_node->value++;
+    }
     else
         upper_node->left = upper_node->left ? inner_add(upper_node->left, node_to_put) : node_to_put;
 
@@ -122,14 +185,7 @@ std::shared_ptr<RankTreeNode> rank_tree::inner_add(std::shared_ptr<RankTreeNode>
         return upper_node->left->get_balance_factor() >= 0 ? LL_rotate(upper_node) : LR_rotate(upper_node);
     else if (upper_node->get_balance_factor() == -2)
         return upper_node->right->get_balance_factor() <= 0 ? RR_rotate(upper_node) : RL_rotate(upper_node);
-
-    // update the node height
-    upper_node->height = max(upper_node->right? upper_node->right->height: -1,
-                             upper_node->left? upper_node->left->height : -1) + 1;
-    upper_node->size_of_subtree = (upper_node->right? upper_node->right->size_of_subtree : 0)
-            + (upper_node->left? upper_node->left->size_of_subtree : 0) + 1;
-    upper_node->sum_of_subtree = (upper_node->right? upper_node->right->sum_of_subtree : 0)
-                                  + (upper_node->left? upper_node->left->sum_of_subtree : 0) + ((upper_node->key) * (upper_node->value));
+    upper_node->update_details();
     return upper_node;
 }
 
@@ -137,9 +193,9 @@ std::shared_ptr<RankTreeNode> rank_tree::inner_add(std::shared_ptr<RankTreeNode>
 
 int merge_arr(int  key_arr[], int key_arr1[], int  key_arr2[], int val_arr[],
            int val_arr1[], int val_arr2[], int size1, int size2){
-    int p1 = 0, p2 = 0, p_new = 0, new_size = 0;
+    int p1 = 0, p2 = 0, p_new = 0;
+
     while(p1<size1 && p2<size2) {
-        new_size++;
         if (key_arr1[p1] == key_arr2[p2]){
             key_arr[p_new] = key_arr1[p1];
             val_arr[p_new++] = val_arr1[p1++] + val_arr2[p2++];
@@ -153,26 +209,28 @@ int merge_arr(int  key_arr[], int key_arr1[], int  key_arr2[], int val_arr[],
         }
     }
     while(p1<size1){
-        new_size++;
         key_arr[p_new] = key_arr1[p1];
         val_arr[p_new++] = val_arr1[p1++];
     }
     while(p2<size2){
-        new_size++;
         key_arr[p_new] = key_arr2[p2];
         val_arr[p_new++] = val_arr2[p2++];
     }
-    return new_size;
+    return p_new;
 }
-rank_tree rank_tree::merge(const rank_tree& tree1, const rank_tree& tree2){
+RankTree RankTree::merge(const RankTree& tree1, const RankTree& tree2){
     int size1 = tree1.get_size(), size2 = tree2.get_size(), index = 0;
+    //we need to copy 0 even if its node does not represent any value
+    //therefore not counted in size
+    if(*(tree1.zero)==0)
+        size1 ++;
+    if(*(tree2.zero) == 0)
+        size2++;
     int val_arr1[size1], key_arr1[size1], val_arr2[size2], key_arr2[size2], key_arr[size1+size2], val_arr[size1+size2];
-    StatusType status;
-    status = tree1.get_inorder(size1, key_arr1, val_arr1);
+    tree1.get_inorder(size1, key_arr1, val_arr1);
     tree2.get_inorder(size2, key_arr2, val_arr2);
     int size = merge_arr(key_arr, key_arr1, key_arr2, val_arr, val_arr1, val_arr2, size1, size2);
-
-    rank_tree tree;
+    RankTree tree;
     tree.root = create_half_full_avl_tree(find_pow_of_2(size)-1, size, key_arr, val_arr, &index);
     tree.size = size;
     tree.zero = &(tree.get(0))->value;
@@ -180,28 +238,25 @@ rank_tree rank_tree::merge(const rank_tree& tree1, const rank_tree& tree2){
 }
 
 
-StatusType rank_tree::add_0(){
+StatusType RankTree::add_0(){
     if(zero){
         (*zero)++;
+        size++;
     } else
         return FAILURE;
     return SUCCESS;
 }
 
 
-StatusType rank_tree::add(int  key){
+StatusType RankTree::add(int key){
     if(key == 0){
         return add_0();
-    }
-    std::shared_ptr<RankTreeNode> right_one = this->get(key);
-    if(right_one != nullptr) {
-        (right_one->value)++;
-        return SUCCESS;
     }
     try {
         std::shared_ptr<RankTreeNode> new_node = std::make_shared<RankTreeNode>(key);
         new_node->value = MIN_COUNT;
-        this->root = rank_tree::inner_add(root, new_node);
+        new_node->update_details();
+        this->root = RankTree::inner_add(root, new_node);
     }catch(const std::bad_alloc&){
         return ALLOCATION_ERROR;
     }
@@ -211,7 +266,7 @@ StatusType rank_tree::add(int  key){
 
 
 
-std::shared_ptr<RankTreeNode> rank_tree::find(int  key){
+std::shared_ptr<RankTreeNode> RankTree::find(int  key){
 
     if(this->root == nullptr || this->root->key == key)
         return nullptr;
@@ -233,7 +288,7 @@ std::shared_ptr<RankTreeNode> rank_tree::find(int  key){
 }
 
 
-StatusType rank_tree::inner_get_inorder(std::shared_ptr<RankTreeNode> node,
+StatusType RankTree::inner_get_inorder(std::shared_ptr<RankTreeNode> node,
                                        int number_of_nodes, int  key_arr[], int val_arr[], int *index) const{
 
     if(node == nullptr)
@@ -258,7 +313,7 @@ StatusType rank_tree::inner_get_inorder(std::shared_ptr<RankTreeNode> node,
 }
 
 
-StatusType rank_tree::get_inorder(int number_of_nodes, int  key_arr[], int val_arr[]) const{
+StatusType RankTree::get_inorder(int number_of_nodes, int  key_arr[], int val_arr[]) const{
     int index = 0;
     return inner_get_inorder(this->root, number_of_nodes, key_arr, val_arr, &index);
 }
@@ -266,26 +321,25 @@ StatusType rank_tree::get_inorder(int number_of_nodes, int  key_arr[], int val_a
 
 
 
-std::shared_ptr<RankTreeNode> rank_tree::create_half_full_avl_tree
+std::shared_ptr<RankTreeNode> RankTree::create_half_full_avl_tree
 (int full_size, int size, int key_arr[], int val_arr[], int* index){
     std::shared_ptr<RankTreeNode> new_node = std::make_shared<RankTreeNode>(-1);
     if(size == 0)
         return nullptr;
     if(size <= 1){
         new_node->height = 0;
-        new_node->sum_of_subtree = key_arr[*index] * val_arr[*index];
         new_node->key = key_arr[*index];
         new_node->value = val_arr[(*index)++];
-        new_node->size_of_subtree = new_node->value;
+        new_node->update_details();
         return new_node;
     }
     int size_of_left, full_size_of_right;
     int full_son/*without leaves*/ =(((full_size-1)/2)-1)/2, leaves/*of full son*/ = full_son + 1;
-    if(2 * full_son + leaves < size){
+    if(2 * full_son + leaves < size - 1){
         size_of_left = full_son + leaves;
         full_size_of_right = (full_size -1)/2;
     }
-    else if(2 * full_son + leaves == size){
+    else if(2 * full_son + leaves == size - 1){
         size_of_left = full_son + leaves;
         full_size_of_right = full_son;
     }
@@ -294,24 +348,15 @@ std::shared_ptr<RankTreeNode> rank_tree::create_half_full_avl_tree
         full_size_of_right = full_son;
     }
 
-    new_node->left = rank_tree::create_half_full_avl_tree((full_size - 1) / 2,
+    new_node->left = RankTree::create_half_full_avl_tree((full_size - 1) / 2,
                                                          size_of_left, key_arr, val_arr, index);
     new_node->key = key_arr[*index];
     new_node->value = val_arr[(*index)++];
-    new_node->right = rank_tree::create_half_full_avl_tree(full_size_of_right,
+    new_node->right = RankTree::create_half_full_avl_tree(full_size_of_right,
                                                                size-1-size_of_left, key_arr, val_arr, index);
 
-    int left_height = new_node->left? new_node->left->height : -1;
-    int right_height = new_node->right? new_node->right->height : -1;
-    new_node->height = max(left_height, right_height) + 1;
+    new_node->update_details();
 
-    int left_size = new_node->left? new_node->left->size_of_subtree : 0;
-    int right_size = new_node->right? new_node->right->size_of_subtree : 0;
-    new_node->size_of_subtree = left_size + right_size + new_node->value;
-
-    int left_sum = new_node->left? new_node->left->sum_of_subtree : 0;
-    int right_sum = new_node->right? new_node->right->sum_of_subtree : 0;
-    new_node->sum_of_subtree = left_sum + right_sum + ((new_node->key) * (new_node->value));
     return new_node;
 }
 
@@ -319,31 +364,31 @@ std::shared_ptr<RankTreeNode> rank_tree::create_half_full_avl_tree
 
 
 
-std::shared_ptr<RankTreeNode> rank_tree::LL_rotate(std::shared_ptr<RankTreeNode> node_to_rotate){
+std::shared_ptr<RankTreeNode> RankTree::LL_rotate(std::shared_ptr<RankTreeNode> node_to_rotate){
     if(node_to_rotate == nullptr || node_to_rotate->left == nullptr)
         return nullptr;
     std::shared_ptr<RankTreeNode> left = node_to_rotate->left;
     node_to_rotate->left = left->right;
     left->right = node_to_rotate;
-    node_to_rotate->height = node_to_rotate->cal_height_non_recursive();
-    left->height = left->cal_height_non_recursive();
+    node_to_rotate->update_details();
+    left->update_details();
     return left;
 }
 
 
-std::shared_ptr<RankTreeNode> rank_tree::RR_rotate(std::shared_ptr<RankTreeNode> node_to_rotate){
+std::shared_ptr<RankTreeNode> RankTree::RR_rotate(std::shared_ptr<RankTreeNode> node_to_rotate){
     if(node_to_rotate == nullptr || node_to_rotate->right == nullptr)
         return nullptr;
     std::shared_ptr<RankTreeNode> right = node_to_rotate->right;
     node_to_rotate->right = right->left;
     right->left = node_to_rotate;
-    node_to_rotate->height = node_to_rotate->cal_height_non_recursive();
-    right->height = right->cal_height_non_recursive();
+    node_to_rotate->update_details();
+    right->update_details();
     return right;
 }
 
 
-std::shared_ptr<RankTreeNode> rank_tree::RL_rotate(std::shared_ptr<RankTreeNode> node_to_rotate){
+std::shared_ptr<RankTreeNode> RankTree::RL_rotate(std::shared_ptr<RankTreeNode> node_to_rotate){
     if(node_to_rotate == nullptr || node_to_rotate->right == nullptr||node_to_rotate->right->left == nullptr)
         return nullptr;
     node_to_rotate->right = LL_rotate(node_to_rotate->right);
@@ -351,7 +396,7 @@ std::shared_ptr<RankTreeNode> rank_tree::RL_rotate(std::shared_ptr<RankTreeNode>
 }
 
 
-std::shared_ptr<RankTreeNode> rank_tree::LR_rotate(std::shared_ptr<RankTreeNode> node_to_rotate){
+std::shared_ptr<RankTreeNode> RankTree::LR_rotate(std::shared_ptr<RankTreeNode> node_to_rotate){
     if(node_to_rotate == nullptr || node_to_rotate->left == nullptr||node_to_rotate->left->right == nullptr)
         return nullptr;
     node_to_rotate->left = RR_rotate(node_to_rotate->left);
@@ -359,14 +404,14 @@ std::shared_ptr<RankTreeNode> rank_tree::LR_rotate(std::shared_ptr<RankTreeNode>
 }
 
 
-void rank_tree::removeLeaf(std::shared_ptr<RankTreeNode>* parent_ptr)
+void RankTree::removeLeaf(std::shared_ptr<RankTreeNode>* parent_ptr)
 {
     (*parent_ptr) = nullptr;
     size--;
 }
 
 
-void rank_tree::removeNodeWithOnlyOneChild(std::shared_ptr<RankTreeNode>* parent_ptr,
+void RankTree::removeNodeWithOnlyOneChild(std::shared_ptr<RankTreeNode>* parent_ptr,
                                           std::shared_ptr<RankTreeNode> current){
     // left child exists
     if(!(current->right) && current->left)
@@ -386,7 +431,7 @@ void rank_tree::removeNodeWithOnlyOneChild(std::shared_ptr<RankTreeNode>* parent
 
 
 
-void rank_tree::removeNodeWithTwoChildren(std::shared_ptr<RankTreeNode> node_to_remove){
+void RankTree::removeNodeWithTwoChildren(std::shared_ptr<RankTreeNode> node_to_remove){
     // step 1: find the replacement node (go right and then all the way left)
     auto replacement_node = node_to_remove->right;
     auto replacement_node_parent = node_to_remove;
@@ -420,7 +465,7 @@ void rank_tree::removeNodeWithTwoChildren(std::shared_ptr<RankTreeNode> node_to_
 
 
 
-void rank_tree::removeRoot() {
+void RankTree::removeRoot() {
     if(!(root->right) && !(root->left)){
         root = nullptr;
         size--;
@@ -441,7 +486,7 @@ void rank_tree::removeRoot() {
 }
 
 
-std::shared_ptr<RankTreeNode> rank_tree::fixBalanceFactor(std::shared_ptr<RankTreeNode> upper_node, int parent_key)
+std::shared_ptr<RankTreeNode> RankTree::fixBalanceFactor(std::shared_ptr<RankTreeNode> upper_node, int parent_key)
 {
     // recurse until we find the parent
     if (upper_node.get()->key < parent_key)
@@ -471,7 +516,7 @@ std::shared_ptr<RankTreeNode> rank_tree::fixBalanceFactor(std::shared_ptr<RankTr
 
 
 
-StatusType rank_tree::remove(int key){
+StatusType RankTree::remove(int key){
     std::shared_ptr<RankTreeNode> current = get(key);
     if(current == nullptr){
         return FAILURE;
@@ -521,7 +566,7 @@ StatusType rank_tree::remove(int key){
     return SUCCESS;
 }
 
-StatusType rank_tree::reduce_val(int key){
+StatusType RankTree::reduce_val(int key){
     std::shared_ptr<RankTreeNode> nod = get(key);
     if(nod == nullptr)
         return INVALID_INPUT;

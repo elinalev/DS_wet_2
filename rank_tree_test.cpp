@@ -42,10 +42,10 @@ int main(){
     int index = 0;
     int size = 12;
     int full_size = find_pow_of_2(size) -1;
-    rank_tree tree;
-    tree.root = rank_tree::create_half_full_avl_tree(full_size, size, arr1, arr2, &index);
+    RankTree tree;
+    tree.root = RankTree::create_half_full_avl_tree(full_size, size, arr1, arr2, &index);
     tree.size = size;
-    rank_tree mtree = rank_tree::merge(tree, tree);
+    RankTree mtree = RankTree::merge(tree, tree);
     print_tree(mtree.root); space = 5;
 
     for(int i = 0; i<7; i++){

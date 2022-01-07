@@ -1,7 +1,12 @@
-cmake_minimum_required(VERSION 2.8.12.2)
-project(DS_wet_2)
+cmake_minimum_required(VERSION 2.8.4)
+project(mtm_2_partb)
 
-# GoogleTest requires at least C++11
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(DS_wet_2 test_hash_table.cpp hash_table.h utils.h)
+set(MTM_FLAGS_DEBUG "-std=c++11 -Wall -Werror --coverage")
+set(MTM_FLAGS_RELEASE "${MTM_FLAGS_DEBUG} -DNDEBUG")
+set(CMAKE_CXX_FLAGS ${MTM_FLAGS_DEBUG})
+
+set(CPP_FILES test_avl_tree.cpp)
+
+add_executable(mtm_2_partb ${CPP_FILES})

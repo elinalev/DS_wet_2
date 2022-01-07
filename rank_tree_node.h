@@ -33,10 +33,25 @@ public:
     int cal_height_non_recursive(){
         int left_h = left == nullptr? -1 : left->height;
         int right_h = right == nullptr? -1 : right->height;
-        return max(left_h, right_h) +1;
+        return height = max(left_h, right_h) +1;
+    }
+    void get_size_of_subtree(){
+        int left_size = left ?left->size_of_subtree : 0;
+        int right_size = right?right->size_of_subtree : 0;
+        size_of_subtree = (key? left_size + right_size + value : left_size + right_size);
+    }
+    void get_sum_of_subtree(){
+        int left_sum = left? left->sum_of_subtree : 0;
+        int right_sum = right? right->sum_of_subtree : 0;
+        sum_of_subtree = left_sum + right_sum + ((key) * (value));
+    }
+    void update_details(){
+        cal_height_non_recursive();
+        get_size_of_subtree();
+        get_sum_of_subtree();
     }
 };
 
-RankTreeNode::RankTreeNode(int key) : right(nullptr), left(nullptr), height(0), key(key), value(0), size_of_subtree(0), sum_of_subtree(0){}
+RankTreeNode::RankTreeNode(int key) : key(key), value(0), right(nullptr) , left(nullptr), height(0), size_of_subtree(0), sum_of_subtree(0){}
 
 #endif //DS_WET_1_TREE_NODE_H
