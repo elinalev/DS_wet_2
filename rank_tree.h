@@ -565,7 +565,7 @@ StatusType RankTree::remove(int key){
     root = fixBalanceFactor(root, parent.get()->key);
     return SUCCESS;
 }
-
+/*
 StatusType RankTree::reduce_val(int key){
     std::shared_ptr<RankTreeNode> nod = get(key);
     if(nod == nullptr)
@@ -580,6 +580,6 @@ StatusType RankTree::reduce_val(int key){
     if(nod->value <= 0)
         return remove(key);
     return SUCCESS;
-}
+}*/
 
 #endif //DS_WET_1_AVL_TREE_H
