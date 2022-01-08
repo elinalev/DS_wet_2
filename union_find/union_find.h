@@ -15,6 +15,9 @@ class UnionFind{
     int* parent;
     //an array of groups of size as number of groups+1
     Group* groups;
+
+    int getRoot(int x);
+
 public:
 
     ///todo: function for debug, remove it
@@ -24,7 +27,6 @@ public:
             printf ("%d  ",groups[i].get_size());
     }
     explicit UnionFind(int k);
-    int getRoot(int x);
     int find(int x);
     StatusType unite(int root1, int root2);
 
@@ -33,6 +35,9 @@ public:
         delete[] parent;
         delete[] groups;
     }
+    /// get the group related to a root of the tree
+    /// \param root - the key we want the struct of
+    /// \return - required group in case of success, group with no trees inside in failure
     Group& get_group(int root);
 };
 
