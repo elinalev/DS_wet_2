@@ -29,6 +29,8 @@ public:
     StatusType unite(int root1, int root2);
 
     ~UnionFind(){
+        delete[] size;
+        delete[] parent;
         delete[] groups;
     }
     Group& get_group(int root);
