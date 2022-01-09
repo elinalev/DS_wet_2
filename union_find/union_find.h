@@ -24,7 +24,7 @@ public:
     void print_union(){
         printf("\n%d\n", k);
         for (int i = 0; i < k; i++)
-            printf ("%d  ",groups[i].get_size());
+            printf ("%d  ",size[i]);
     }
     explicit UnionFind(int k);
     int find(int x);
@@ -44,8 +44,10 @@ public:
 UnionFind::UnionFind(int k): k(k+1){
     size = new int[k+1];
     parent = new int[k+1];
-    for(int i = 0; i < k+1; i++)
+    for(int i = 0; i < k+1; i++) {
+        size[i] = 1;
         parent[i] = -1;
+    }
     groups = new Group[k+1];
 }
 
@@ -70,7 +72,7 @@ StatusType UnionFind::unite(int root1, int root2){
     if(root1 < 0 || root2 < 0 || root1 > k || root2 > k || root1 == root2)
         return INVALID_INPUT;
     int bigger, smaller;
-    if(groups[root1].get_size() > groups[root2].get_size())
+    if(size[root1] > size[root2])
         bigger = root1, smaller = root2;
     else
         bigger = root2, smaller = root1;
