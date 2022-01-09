@@ -5,10 +5,12 @@
 #ifndef MTM_2_PARTB_GROUP_H
 #define MTM_2_PARTB_GROUP_H
 #define MAX_SCORE 200
+
 struct Group{
     Group() = default;
     //we will think of group_scores[0] as all_group_levels
     Score group_scores[MAX_SCORE+1];
+    RankTree all_group_levels;
     ///TODO: problems creating destructor, need to check if default one is good enough
     ~Group() = default;
 
@@ -31,11 +33,5 @@ struct Group{
         return group_scores[0].score_levels->get_size();
     }
 };
-StatusType Group::remove_group(){
-    for(int i = 0; i < MAX_SCORE+1; i++){
-        group_scores[i].score_levels = nullptr;
-    }
-    return SUCCESS;
-}
 
 #endif //MTM_2_PARTB_GROUP_H

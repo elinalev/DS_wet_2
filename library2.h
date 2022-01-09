@@ -41,12 +41,12 @@ StatusType IncreasePlayerIDLevel(void *DS, int PlayerID, int LevelIncrease);
 StatusType ChangePlayerIDScore(void *DS, int PlayerID, int NewScore);
 
 StatusType GetPercentOfPlayersWithScoreInBounds(void *DS, int GroupID, int score, int lowerLevel, int higherLevel,
-                                            double * players);
+                                                double * players);
 
 StatusType AverageHighestPlayerLevelByGroup(void *DS, int GroupID, int m, double * level);
 
 StatusType GetPlayersBound(void *DS, int GroupID, int score, int m,
-                                         int * LowerBoundPlayers, int * HigherBoundPlayers);
+                           int * LowerBoundPlayers, int * HigherBoundPlayers);
 
 void Quit(void** DS);
 

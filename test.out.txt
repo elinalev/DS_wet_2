@@ -13,4 +13,3 @@ MergeGroups: SUCCESS
 RemovePlayer: SUCCESS
 AverageHighestPlayerLevelByGroup: 1.67
 Quit done.
-
