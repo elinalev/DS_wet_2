@@ -7,10 +7,10 @@
 #define MAX_SCORE 200
 
 struct Group{
-    Group() = default;
+    Group();
     //we will think of group_scores[0] as all_group_levels
     Score group_scores[MAX_SCORE+1];
-    RankTree all_group_levels;
+    std::shared_ptr<RankTree> all_group_levels;
     ///TODO: problems creating destructor, need to check if default one is good enough
     ~Group() = default;
 

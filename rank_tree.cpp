@@ -41,6 +41,7 @@ int RankTree::inner_get_sum(int key, std::shared_ptr<RankTreeNode> node){
     int left_and_sum = (node->key * node->value) + (node->left? node->left->sum_of_subtree : 0);
     return left_and_sum + inner_get_sum(key, node->right);
 }
+
 int RankTree::get_sum(int key){
     return inner_get_sum(key, root);
 }
@@ -101,6 +102,7 @@ int merge_arr(int  key_arr[], int key_arr1[], int  key_arr2[], int val_arr[],
     }
     return p_new;
 }
+
 RankTree RankTree::merge(const RankTree& tree1, const RankTree& tree2){
     int size1 = tree1.get_size(), size2 = tree2.get_size(), index = 0;
     //we need to copy 0 even if its node does not represent any value

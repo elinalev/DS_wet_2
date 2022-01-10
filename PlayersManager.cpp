@@ -8,8 +8,8 @@ int myHashFunction(int player_id){
 
 PlayersManager::PlayersManager(int k, int scale) :
     players_table(HashTable<int,Player,int (*)(int)>(&myHashFunction)),
-    groups(UnionFind(k)),
-    all_levels(RankTree()){
+    groups(UnionFind(k)){
+    all_levels = std::make_shared<RankTree>();
     scores = new Score[scale];
     this->groups_count = k;
     this->scale = scale;
@@ -38,10 +38,10 @@ StatusType PlayersManager::AddPlayer(int PlayerID, int GroupID, int score){
     auto group = groups.get_group(GroupID);
 
     // update all level trees - will add this in O(1)
-    group.all_group_levels.add(0);
+    group.all_group_levels->add(0);
     group.group_scores[score].score_levels->add(0);
     scores[score].score_levels->add(0);
-    all_levels.add(0);
+    all_levels->add(0);
 
     return SUCCESS;
 }
@@ -61,10 +61,10 @@ StatusType PlayersManager::RemovePlayer(int PlayerID){
     int player_score = player->getScore();
 
     auto group = groups.get_group(player->getGroupId());
-    group.all_group_levels.remove(player_level);
+    group.all_group_levels->remove(player_level);
     group.group_scores[player_score].score_levels->remove(player_level);
     scores[player_score].score_levels->remove(player_level);
-    all_levels.remove(player_level);
+    all_levels->remove(player_level);
 
     players_table.remove(PlayerID);
 
@@ -83,20 +83,23 @@ StatusType PlayersManager::IncreasePlayerIDLevel(int PlayerID, int LevelIncrease
     }
 
     int player_level = player->getLevel();
+    int new_player_level = player_level + LevelIncrease;
     int player_score = player->getScore();
     auto group = groups.get_group(player->getGroupId());
 
-    group.all_group_levels.remove(player_level);
-    group.all_group_levels.add(player_level + LevelIncrease);
+    group.all_group_levels->remove(player_level);
+    group.all_group_levels->add(new_player_level);
 
     group.group_scores[player_score].score_levels->remove(player_level);
-    group.group_scores[player_score].score_levels->add(player_level + LevelIncrease);
+    group.group_scores[player_score].score_levels->add(new_player_level);
 
     scores[player_score].score_levels->remove(player_level);
-    scores[player_score].score_levels->add(player_level + LevelIncrease);
+    scores[player_score].score_levels->add(new_player_level);
 
-    all_levels.remove(player_level);
-    all_levels.add(player_level + LevelIncrease);
+    all_levels->remove(player_level);
+    all_levels->add(new_player_level);
+
+    player->setLevel(new_player_level);
 
     return SUCCESS;
 }
@@ -122,38 +125,46 @@ StatusType PlayersManager::ChangePlayerIDScore(int PlayerID, int NewScore){
     scores[player_score].score_levels->remove(player_level);
     scores[NewScore].score_levels->add(player_level);
 
+    player->setScore(NewScore);
+
     return SUCCESS;
 
 }
 
 
-double getNumberOfPlayersWithScoreUntilLevel(std::shared_ptr<RankTree> score_levels, int level){
-    int count = score_levels->get(0)->value;
-    count +=
-    return count;
+int getNumberOfPlayersWithScoreUntilLevel(std::shared_ptr<RankTree> &levels, int level){
+    return levels->get_rank(level);
 }
 
 StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int score, int lowerLevel,
                                                                 int higherLevel, double *players) {
-    //TODO: continue to implement
-    if((GroupID < 0) || (GroupID > groups_count) || (players == NULL)){
+    if((GroupID < 0) || (GroupID > groups_count) || (players == nullptr)){
         return INVALID_INPUT;
     }
 
     std::shared_ptr<RankTree> score_levels;
-    int total_number_of_players_with_score;
+    std::shared_ptr<RankTree> levels;
+
+    int total_number_of_players_between_levels;
+    int number_of_players_between_level_with_score;
 
     if (GroupID == 0){
         score_levels = scores[score].score_levels;
+        levels = all_levels;
     }
     else{
         auto group = groups.get_group(GroupID);
         score_levels = group.group_scores[score].score_levels;
+        levels = group.all_group_levels;
     }
 
-    *players = (getNumberOfPlayersWithScoreUntilLevel(score_levels, higherLevel) -
-            getNumberOfPlayersWithScoreUntilLevel(score_levels, lowerLevel) + 1) / ;
+    total_number_of_players_between_levels = getNumberOfPlayersWithScoreUntilLevel(levels, higherLevel) -
+            getNumberOfPlayersWithScoreUntilLevel(levels, lowerLevel);
 
+    number_of_players_between_level_with_score = getNumberOfPlayersWithScoreUntilLevel(score_levels, higherLevel) -
+            getNumberOfPlayersWithScoreUntilLevel(score_levels, lowerLevel);
+
+    *players = (double(number_of_players_between_level_with_score) * 100 / total_number_of_players_between_levels);
 
     return SUCCESS;
 }

@@ -20,7 +20,7 @@ class PlayersManager{
     int scale;
 
     // RankTree of level
-    RankTree all_levels;
+    std::shared_ptr<RankTree> all_levels;
 
 public:
     explicit PlayersManager(int k, int scale);

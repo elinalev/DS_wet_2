@@ -13,3 +13,5 @@ MergeGroups 1 2
 RemovePlayer 20
 AverageHighestPlayerLevelByGroup 2 3
 Quit
+
+

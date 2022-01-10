@@ -12,5 +12,8 @@ public:
     int getGroupId();
     int getScore();
     int getLevel();
+
+    void setScore(int new_score);
+    void setLevel(int new_level);
 };
 #endif //MTM_2_PARTB_PLAYER_H
