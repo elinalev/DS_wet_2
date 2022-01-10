@@ -41,3 +41,17 @@ void RankTreeNode::update_details(){
     get_size_of_subtree();
     get_sum_of_subtree();
 }
+
+
+int RankTreeNode::num_of_smaller_then_this(){
+    if(!left)
+        return 0;
+    return left->size_of_subtree;
+}
+
+int RankTreeNode::sum_of_smaller_then_this(){
+    if(!left)
+        return 0;
+    return left->sum_of_subtree;
+}
+

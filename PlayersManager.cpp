@@ -17,8 +17,7 @@ PlayersManager::PlayersManager(int k, int scale) :
 
 
 StatusType PlayersManager::MergeGroups(int GroupID1, int GroupID2){
-    //TODO: implement
-    return FAILURE;
+    return groups.unite(GroupID1, GroupID2);
 }
 
 
@@ -60,7 +59,7 @@ StatusType PlayersManager::RemovePlayer(int PlayerID){
     int player_level = player->getLevel();
     int player_score = player->getScore();
 
-    auto group = groups.get_group(player->getGroupId());
+    auto group = groups.get_group(groups.find(player->getGroupId()));
     group.all_group_levels->remove(player_level);
     group.group_scores[player_score].score_levels->remove(player_level);
     scores[player_score].score_levels->remove(player_level);
@@ -171,8 +170,20 @@ StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int
 
 
 StatusType PlayersManager::AverageHighestPlayerLevelByGroup(int GroupID, int m, double * level) {
-    //TODO: implement
-    return FAILURE;
+    if(!m || GroupID < 0 || GroupID > groups_count || m <= 0)
+        return INVALID_INPUT;
+    std::shared_ptr<RankTree> levels;
+    if (GroupID == 0)
+        levels = all_levels;
+    else{
+        Group group = groups.get_group(groups.find(GroupID));
+        levels = group.all_group_levels;
+    }
+    if (levels->get_size() - m < 0)
+        return FAILURE;
+
+    *level = (double) levels->sum_of_best_m(m) / (double)(m);
+    return SUCCESS;
 }
 
 

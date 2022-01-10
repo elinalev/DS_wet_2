@@ -19,6 +19,7 @@ struct Group{
     /// \return SUCCESS or ALLOCATION_ERROR
     StatusType merge(const Group& smaller){
         try {
+            *all_group_levels = RankTree::merge(*all_group_levels,*(smaller.all_group_levels));
             for(int i = 0; i <= MAX_SCORE; i++)
                 group_scores[i].merge(smaller.group_scores[i]);
         }catch(const std::bad_alloc&){

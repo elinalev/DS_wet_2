@@ -24,6 +24,9 @@ public:
     void get_size_of_subtree();
     void get_sum_of_subtree();
     void update_details();
+    int num_of_smaller_then_this();
+    int sum_of_smaller_then_this();
+
 };
 
 

@@ -28,19 +28,23 @@ int UnionFind::find(int x){
 }
 
 StatusType UnionFind::unite(int root1, int root2){
-    if(root1 < 0 || root2 < 0 || root1 > k || root2 > k || root1 == root2)
+    if(root1 <= 0 || root2 <= 0 || root1 > k || root2 > k || root1 == root2)
         return INVALID_INPUT;
-    int bigger, smaller;
-    if(size[root1] > size[root2])
-        bigger = root1, smaller = root2;
-    else
-        bigger = root2, smaller = root1;
-    parent[smaller] = bigger;
-    size[bigger] += size[smaller];
-    size[smaller] = -1;
-    StatusType status = groups[bigger].merge(groups[smaller]);
-    groups[smaller].remove_group();
-    return status;
+    try {
+        int bigger, smaller;
+        if (size[root1] > size[root2])
+            bigger = root1, smaller = root2;
+        else
+            bigger = root2, smaller = root1;
+        parent[smaller] = bigger;
+        size[bigger] += size[smaller];
+        size[smaller] = -1;
+        StatusType status = groups[bigger].merge(groups[smaller]);
+        groups[smaller].remove_group();
+        return status;
+    }catch (const std::bad_alloc&){
+        return ALLOCATION_ERROR;
+    }
 }
 
 

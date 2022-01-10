@@ -123,6 +123,48 @@ RankTree RankTree::merge(const RankTree& tree1, const RankTree& tree2){
     tree.zero = &(tree.get(0))->value;
     return tree;
 }
+int RankTree::sum_of_best_m(int m) {
+    return inner_sum_of_best_m(root, m);
+}
+
+int RankTree::inner_sum_of_best_m(std::shared_ptr<RankTreeNode> nod, int m){
+    if(m > size || m < 0)
+        return -1;
+    if(!nod)
+        return 0;
+    int num_from_left_and_this = m;
+    if(nod->right)
+        num_from_left_and_this -= nod->right->size_of_subtree;
+    if(num_from_left_and_this <= 0)
+        return inner_sum_of_best_m((nod->right), m);
+    int num_from_this = nod->value > num_from_left_and_this?
+            num_from_left_and_this : nod->value;
+    int num_from_left = num_from_left_and_this - num_from_this;
+    return nod->key * num_from_this +
+            (nod->right? nod->right->sum_of_subtree : 0) +
+            inner_sum_of_best_m(nod->left, num_from_left);
+}
+
+std::shared_ptr<RankTreeNode> RankTree::get_node_of_rank_x(int x){
+    std::shared_ptr<RankTreeNode> nod = root;
+    while(nod){
+        if(x < 0)
+            return nullptr;
+        if(nod->num_of_smaller_then_this() < x &&
+                nod->num_of_smaller_then_this() + nod->value <= x)
+            return nod;
+        else if(nod->num_of_smaller_then_this() > x){
+            nod = nod->left;
+        }
+        else{
+            x -= nod->num_of_smaller_then_this();
+            x -= nod->value;
+            nod = nod->right;
+
+        }
+    }
+    return nod;
+}
 
 
 StatusType RankTree::add_0(){
