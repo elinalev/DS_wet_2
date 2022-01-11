@@ -52,6 +52,7 @@ private:
     int inner_get_sum(int key, std::shared_ptr<RankTreeNode> node);
     std::shared_ptr<RankTreeNode> fixBalanceFactor(std::shared_ptr<RankTreeNode> upper_node, int parent_key);
     int inner_sum_of_best_m(std::shared_ptr<RankTreeNode> nod, int m);
+    std::shared_ptr<RankTreeNode> inner_find_nod_of_rank_m(std::shared_ptr<RankTreeNode> nod, int m);
 
 public:
     //todo: remove test fuctions
@@ -90,7 +91,7 @@ public:
 
     // getter functions
     int get_size() const{
-        return this->size;
+        return root->size_of_subtree;
     }
 
     //return the number of values smaller(not equal!) to a specific key
@@ -113,6 +114,7 @@ public:
     StatusType get_inorder(int number_of_nodes, int  key_arr[], int val_arr[]) const;
     std::shared_ptr<RankTreeNode> get_node_of_rank_x(int x);
     int sum_of_best_m(int m);
+    std::shared_ptr<RankTreeNode> find_nod_of_rank_m(int m);
 
 
     ///TODO: friends for testing, remove after

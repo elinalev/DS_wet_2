@@ -814,7 +814,11 @@
 \begin_inset Formula $O(1)$
 \end_inset
 
- ונעדכן את הרמה שלו.
+ ממוצע על הקלט)
+\begin_inset Formula $hash\_table$
+\end_inset
+
+( ונעדכן את הרמה שלו.
 \end_layout
 
 \begin_layout Enumerate
@@ -863,6 +867,48 @@
 בונוס:
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+אם ב
+\begin_inset Formula $hash\_table$
+\end_inset
+
+ של 
+\begin_inset Formula $players$
+\end_inset
+
+, נשמור בכל תא במקום רשימה מקושרת- עץ חיפוש בינארי, )כלומר נשתמש בגרסא משופרת
+ של 
+\begin_inset Formula $chain\ hashing$
+\end_inset
+
+(, הסיבוכיות של חיפוש ב
+\begin_inset Formula $players$
+\end_inset
+
+ תהיה חסומה ע
+\begin_inset Quotes erd
+\end_inset
+
+י 
+\begin_inset Formula $O(logn)$
+\end_inset
+
+, זה במקרה הכי גרוע בו כל הקלטים הופנו לאותו תא.
+ ולכן הסיבוכיות הכוללת של הפעולה היא 
+\begin_inset Formula $O(logn+log^{*}k)$
+\end_inset
+
+ משוערך.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+הערה לגבי המימוש הקיים: זה בדיוק מה שעשינו.
+\end_layout
+
+\end_deeper
+\end_deeper
 \begin_layout Enumerate
 \begin_inset Formula $changePlayerIDScore$
 \end_inset
@@ -1141,7 +1187,11 @@
 
 \begin_deeper
 \begin_layout Enumerate
-נמצא בעץ הרמות של הקבוצה את הרמה המינימלית 
+נמצא בעץ הרמות של הקבוצה)או הכללי אם 
+\begin_inset Formula $GroupID==0$
+\end_inset
+
+( את הרמה המינימלית 
 \begin_inset Formula $min\_level$
 \end_inset
 
@@ -1149,52 +1199,232 @@
 \begin_inset Formula $m$
 \end_inset
 
- שחקנים עם רמה יותר גבוהה)או שווה(.
- נמצא כמה שחקנים יש עם רמה גדולה ממש מהמינימלית 
-\begin_inset Formula $b$
+ שחקנים עם רמה יותר גבוהה)או שווה(, בסיבוכיות 
+\begin_inset Formula $O(logn)$
 \end_inset
 
 .
- נוכל לחשב כמה בדיוק יש ברמה המינימלית, וכמה בדיוק צריך מהרמה המינימלית
+\end_layout
+
+\begin_layout Enumerate
+נחשב כמה שחקנים יש עם רמה קטנה מהמינימלית, ונחסיר סכום זה מסך השחקנים, נקבל
+ את מספר השחקנים ברמה הדרושה + מספר השחקנים ברמה גדולה מדי, נקרא לערך זה
  
-\begin_inset Formula $a$
+\begin_inset Formula $good\_or\_too\_big$
+\end_inset
+
+.
+ בסיבוכיות 
+\begin_inset Formula $O(logn)$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Enumerate
-נלך לתא במערך של ה
-\begin_inset Formula $score$
+נמצא כמה שחקנים יש עם רמה גדולה ממש מהמינימלית 
+\begin_inset Formula $too\_big$
 \end_inset
 
- הנוכחי ונסתכל על העץ שבו נמצא את מספר השחקנים הגדולים ממש מהרמה המינימלית)עבור
- ה
-\begin_inset Formula $score$
+, באמצעות פעולה )ב( עם הרמה 
+\begin_inset Formula $min\_level+1$
 \end_inset
 
- הנוכחי( 
-\begin_inset Formula $c$
+.
+ באותה סיבוכיות: 
+\begin_inset Formula $O(logn)$
 \end_inset
 
- ואת מספר השחקנים בדיוק ברמה המינימלית 
-\begin_inset Formula $d$
+
+\end_layout
+
+\begin_layout Enumerate
+כעת נוכל לחשב כמה שחקנים יש בדיוק יש ברמה המינימלית 
+\begin_inset Formula $good=good\_or\_too\_big-too\_big$
+\end_inset
+
+.
+ ב
+\begin_inset Formula $O(1)$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Enumerate
-נחשב
+נשים לב כי יש לקחת 
+\begin_inset Formula $m-too\_big$
+\end_inset
+
+ שחקנים מהרמה הרצויה או יותר נמוכה.
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $TODO$
+נלך לעץ של הקבוצה המתאים ל
+\begin_inset Formula $score$
+\end_inset
+
+ הדרוש, ונמצא את הנוד עם הרמה המתאימה בסיבוכיות 
+\begin_inset Formula $O(logn)$
+\end_inset
+
+.
+ המונה של נוד זה הוא מספר השחקנים מהרמה הדרושה מה
+\begin_inset Formula $score$
+\end_inset
+
+ הדרוש, נסמן את ערך המונה 
+\begin_inset Formula $relevant\_players$
+\end_inset
+
+.)יהיה
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\numeric on
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+0
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\numeric off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+אם הנוד לא נמצא, כלומר אין שחקנים מהרמה וה
+\begin_inset Formula $score$
+\end_inset
+
+ הדרוש(.
+\end_layout
+
+\begin_layout Enumerate
+כעת, ניקח לכל היותר 
+\begin_inset Formula $m-too\_big$
+\end_inset
+
+ שחקנים מהרמה הדרושה עם התוצאה הדרושה, כלומר 
+\begin_inset Formula $HigherBoundPlayers=min(m-too\_big,relevant\_palyers)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+כמות השחקנים מהרמה הדרושה שאינם מה
+\begin_inset Formula $score$
+\end_inset
+
+ הדרוש הוא 
+\begin_inset Formula $good-relavant\_players$
+\end_inset
+
+, נוכל לקחת כמות זו של שחקנים, ואת כל השחקנים ב
+\begin_inset Formula $too\_big$
+\end_inset
+
+, לאחר שניקח אותם, נהיה חייבים לקחת שחקנים מה
+\begin_inset Formula $score$
+\end_inset
+
+ הדרוש.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+לכן 
+\begin_inset Formula $LowerBoundPlayers=min(m-too\_big-(good-relevant\_players),relevant\_players)$
 \end_inset
 
 
 \end_layout
 
+\begin_layout Enumerate
+ייתכן וכעת 
+\begin_inset Formula $LowerBoundPlayers$
+\end_inset
+
+ שלילי)המשמעות היא שגם עבור 
+\begin_inset Formula $m$
+\end_inset
+
+ גדול יותר היינו מקבלים
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\numeric on
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+0
+\numeric off
+(, אם כן נשנה את הערך שלו ל
+\numeric on
+0
+\numeric off
+.
+\end_layout
+
+\end_deeper
 \end_deeper
 \begin_layout Enumerate
 \begin_inset Formula $Quit$

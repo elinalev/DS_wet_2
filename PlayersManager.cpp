@@ -1,5 +1,5 @@
 #include "PlayersManager.h"
-
+#include <assert.h>
 
 int myHashFunction(int player_id){
     return player_id;
@@ -186,9 +186,44 @@ StatusType PlayersManager::AverageHighestPlayerLevelByGroup(int GroupID, int m, 
     return SUCCESS;
 }
 
+int min(int a, int b){
+    return a<b? a : b;
+}
 
 StatusType PlayersManager::GetPlayersBound(int GroupID, int score, int m,
                            int * LowerBoundPlayers, int * HigherBoundPlayers){
-    //TODO: implement
-    return FAILURE;
+    if(m < 0 || GroupID < 0 || GroupID > groups_count || score <= 0 || score > scale)
+        return INVALID_INPUT;
+    std::shared_ptr<RankTree> levels;
+    std::shared_ptr<RankTree> score_levels;
+    if (GroupID == 0){
+        levels = all_levels;
+        score_levels = scores[score].score_levels;
+    }
+    else{
+        Group group = groups.get_group(groups.find(GroupID));
+        levels = group.all_group_levels;
+        score_levels = group.group_scores[score].score_levels;
+    }
+    if(m > levels->get_size())
+        return FAILURE;
+    std::shared_ptr<RankTreeNode> req_node = levels->find_nod_of_rank_m(levels->get_size() - m);
+    //min_level = req_node->key
+    assert(req_node);
+    int too_big = levels->get_size() - levels->get_rank(req_node->key);
+    int good_or_too_big = levels->get_size() - levels->get_rank(req_node->key-1);
+    int good = good_or_too_big - too_big;
+
+    std::shared_ptr<RankTreeNode> nod = score_levels->get(req_node->key);
+    if(!nod){
+        *LowerBoundPlayers = *HigherBoundPlayers = 0;
+        return SUCCESS;
+    }
+    int relevant_players = score_levels->get_rank(nod->key ) - score_levels->get_rank(nod->key-1);
+
+    *HigherBoundPlayers = min(m-too_big, relevant_players);
+    *LowerBoundPlayers = min(m-too_big-(good-relevant_players), relevant_players);
+    if(*LowerBoundPlayers < 0)
+        *LowerBoundPlayers = 0;
+    return SUCCESS;
 }
