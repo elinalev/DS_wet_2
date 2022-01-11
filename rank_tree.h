@@ -91,7 +91,7 @@ public:
 
     // getter functions
     int get_size() const{
-        return root->size_of_subtree;
+        return *zero + root->size_of_subtree;
     }
 
     //return the number of values smaller(not equal!) to a specific key
