@@ -159,6 +159,10 @@ StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int
 
     total_number_of_players_between_levels = getNumberOfPlayersWithScoreUntilLevel(levels, higherLevel) -
             getNumberOfPlayersWithScoreUntilLevel(levels, lowerLevel);
+    if(total_number_of_players_between_levels == 0){
+        *players = 0;
+        return SUCCESS;
+    }
 
     number_of_players_between_level_with_score = getNumberOfPlayersWithScoreUntilLevel(score_levels, higherLevel) -
             getNumberOfPlayersWithScoreUntilLevel(score_levels, lowerLevel);
@@ -192,7 +196,7 @@ int min(int a, int b){
 
 StatusType PlayersManager::GetPlayersBound(int GroupID, int score, int m,
                            int * LowerBoundPlayers, int * HigherBoundPlayers){
-    if(m < 0 || GroupID < 0 || GroupID > groups_count || score <= 0 || score > scale)
+    if(!HigherBoundPlayers || !LowerBoundPlayers || m < 0 || GroupID < 0 || GroupID > groups_count || score <= 0 || score > scale)
         return INVALID_INPUT;
     std::shared_ptr<RankTree> levels;
     std::shared_ptr<RankTree> score_levels;
@@ -210,6 +214,10 @@ StatusType PlayersManager::GetPlayersBound(int GroupID, int score, int m,
     std::shared_ptr<RankTreeNode> req_node = levels->find_nod_of_rank_m(levels->get_size() - m);
     //min_level = req_node->key
     assert(req_node);
+    if(!req_node){
+        *LowerBoundPlayers = *HigherBoundPlayers = 0;
+        return SUCCESS;
+    }
     int too_big = levels->get_size() - levels->get_rank(req_node->key);
     int good_or_too_big = levels->get_size() - levels->get_rank(req_node->key-1);
     int good = good_or_too_big - too_big;
