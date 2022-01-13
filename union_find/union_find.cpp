@@ -29,7 +29,7 @@ int UnionFind::find(int x){
 
 StatusType UnionFind::unite(int root1, int root2){
     if(root1 <= 0 || root2 <= 0 || root1 > k || root2 > k || root1 == root2)
-        return INVALID_INPUT;
+        return SUCCESS;
     try {
         int bigger, smaller;
         if (size[root1] > size[root2])
@@ -49,5 +49,6 @@ StatusType UnionFind::unite(int root1, int root2){
 
 
 Group& UnionFind::get_group(int root){
+    root = getRoot(root);
     return groups[root];
 }

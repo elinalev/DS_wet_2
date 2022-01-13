@@ -10,14 +10,14 @@ PlayersManager::PlayersManager(int k, int scale) :
     players_table(HashTable<int,Player,int (*)(int)>(&myHashFunction)),
     groups(UnionFind(k)){
     all_levels = std::make_shared<RankTree>();
-    scores = new Score[scale];
+    scores = new Score[scale+1];
     this->groups_count = k;
     this->scale = scale;
 }
 
 
 StatusType PlayersManager::MergeGroups(int GroupID1, int GroupID2){
-    return groups.unite(GroupID1, GroupID2);
+    return groups.unite(groups.find(GroupID1), groups.find(GroupID2));
 }
 
 
@@ -39,6 +39,7 @@ StatusType PlayersManager::AddPlayer(int PlayerID, int GroupID, int score){
     // update all level trees - will add this in O(1)
     group.all_group_levels->add(0);
     group.group_scores[score].score_levels->add(0);
+    group.group_scores[score].score_levels->add(0);
     scores[score].score_levels->add(0);
     all_levels->add(0);
 
@@ -59,7 +60,7 @@ StatusType PlayersManager::RemovePlayer(int PlayerID){
     int player_level = player->getLevel();
     int player_score = player->getScore();
 
-    auto group = groups.get_group(groups.find(player->getGroupId()));
+    auto group = groups.get_group(player->getGroupId());
     group.all_group_levels->remove(player_level);
     group.group_scores[player_score].score_levels->remove(player_level);
     scores[player_score].score_levels->remove(player_level);
@@ -132,7 +133,7 @@ StatusType PlayersManager::ChangePlayerIDScore(int PlayerID, int NewScore){
 
 
 int getNumberOfPlayersWithScoreUntilLevel(std::shared_ptr<RankTree> &levels, int level){
-    return levels->get_rank(level);
+    return level >= 0? levels->get_rank(level) : 0;
 }
 
 StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int score, int lowerLevel,
@@ -140,7 +141,10 @@ StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int
     if((GroupID < 0) || (GroupID > groups_count) || (players == nullptr)){
         return INVALID_INPUT;
     }
-
+    if(score > scale || score <= 0){
+        *players = 0;
+        return SUCCESS;
+    }
     std::shared_ptr<RankTree> score_levels;
     std::shared_ptr<RankTree> levels;
 
@@ -158,14 +162,14 @@ StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int
     }
 
     total_number_of_players_between_levels = getNumberOfPlayersWithScoreUntilLevel(levels, higherLevel) -
-            getNumberOfPlayersWithScoreUntilLevel(levels, lowerLevel);
+            getNumberOfPlayersWithScoreUntilLevel(levels, lowerLevel-1);
     if(total_number_of_players_between_levels == 0){
         *players = 0;
         return SUCCESS;
     }
 
     number_of_players_between_level_with_score = getNumberOfPlayersWithScoreUntilLevel(score_levels, higherLevel) -
-            getNumberOfPlayersWithScoreUntilLevel(score_levels, lowerLevel);
+            getNumberOfPlayersWithScoreUntilLevel(score_levels, lowerLevel-1);
 
     *players = (double(number_of_players_between_level_with_score) * 100 / total_number_of_players_between_levels);
 
@@ -205,7 +209,7 @@ StatusType PlayersManager::GetPlayersBound(int GroupID, int score, int m,
         score_levels = scores[score].score_levels;
     }
     else{
-        Group group = groups.get_group(groups.find(GroupID));
+        Group group = groups.get_group(GroupID);
         levels = group.all_group_levels;
         score_levels = group.group_scores[score].score_levels;
     }

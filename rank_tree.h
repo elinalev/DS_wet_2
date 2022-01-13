@@ -14,6 +14,7 @@ private:
     std::shared_ptr<RankTreeNode> root;
     int* zero;
     int size;
+    int number_of_nodes;
 
     /// functions
     /// create a half full tree, with keys and values from parameters
@@ -29,7 +30,7 @@ private:
     std::shared_ptr<RankTreeNode> find(int  key);
 
     //assists with get_inorder
-    StatusType inner_get_inorder(std::shared_ptr<RankTreeNode> node, int number_of_nodes, int  key_arr[],
+    StatusType inner_get_inorder(std::shared_ptr<RankTreeNode> node, int num_of_nodes, int  key_arr[],
                                  int val_arr[], int *index) const;
 
     //assist with add
@@ -101,7 +102,7 @@ public:
     int get_sum(int key);
     static RankTree merge(const RankTree& tree1, const RankTree& tree2);
     // constructors
-    RankTree(): root(std::make_shared<RankTreeNode>(0)), zero(&(root->value)), size(0){};
+    RankTree(): root(std::make_shared<RankTreeNode>(0)), zero(&(root->value)), size(0), number_of_nodes(1){};
 
     // basic tree operations
     StatusType add(int  key);
@@ -111,7 +112,7 @@ public:
 
 
     // fill the arrays with correct keys and values
-    StatusType get_inorder(int number_of_nodes, int  key_arr[], int val_arr[]) const;
+    StatusType get_inorder(int num_of_nodes, int  key_arr[], int val_arr[]) const;
     std::shared_ptr<RankTreeNode> get_node_of_rank_x(int x);
     int sum_of_best_m(int m);
     std::shared_ptr<RankTreeNode> find_nod_of_rank_m(int m);

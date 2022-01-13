@@ -104,20 +104,16 @@ int merge_arr(int  key_arr[], int key_arr1[], int  key_arr2[], int val_arr[],
 }
 
 RankTree RankTree::merge(const RankTree& tree1, const RankTree& tree2){
-    int size1 = tree1.get_size(), size2 = tree2.get_size(), index = 0;
+    int size1 = tree1.number_of_nodes, size2 = tree2.number_of_nodes, index = 0;
     //we need to copy 0 even if its node does not represent any value
     //therefore not counted in size
-    if(*(tree1.zero)==0)
-        size1 ++;
-    if(*(tree2.zero) == 0)
-        size2++;
     int val_arr1[size1], key_arr1[size1], val_arr2[size2], key_arr2[size2], key_arr[size1+size2], val_arr[size1+size2];
     tree1.get_inorder(size1, key_arr1, val_arr1);
     tree2.get_inorder(size2, key_arr2, val_arr2);
     int size = merge_arr(key_arr, key_arr1, key_arr2, val_arr, val_arr1, val_arr2, size1, size2);
     RankTree tree;
     tree.root = create_half_full_avl_tree(find_pow_of_2(size)-1, size, key_arr, val_arr, &index);
-    tree.size = size;
+    tree.size = tree.number_of_nodes = size;
     if(*(tree1.zero)==0 && *(tree2.zero)==0)
         tree.size -= 1;
     tree.zero = &(tree.get(0))->value;
@@ -181,6 +177,8 @@ StatusType RankTree::add(int key){
         return add_0();
     }
     try {
+        if(!get(key))
+            number_of_nodes++;
         std::shared_ptr<RankTreeNode> new_node = std::make_shared<RankTreeNode>(key);
         new_node->value = MIN_COUNT;
         new_node->update_details();
@@ -217,15 +215,15 @@ std::shared_ptr<RankTreeNode> RankTree::find(int  key){
 
 
 StatusType RankTree::inner_get_inorder(std::shared_ptr<RankTreeNode> node,
-                                       int number_of_nodes, int  key_arr[], int val_arr[], int *index) const{
+                                       int num_of_nodes, int  key_arr[], int val_arr[], int *index) const{
 
     if(node == nullptr)
         return SUCCESS;
 
-    if(inner_get_inorder(node->left, number_of_nodes, key_arr, val_arr, index) == FAILURE)
+    if(inner_get_inorder(node->left, num_of_nodes, key_arr, val_arr, index) == FAILURE)
         return FAILURE;
 
-    if(number_of_nodes == *index)
+    if(num_of_nodes == *index)
         // using the FAILURE flag to stop
         return FAILURE;
 
@@ -234,16 +232,16 @@ StatusType RankTree::inner_get_inorder(std::shared_ptr<RankTreeNode> node,
     val_arr[*index] = node->value;
     (*index)++;
 
-    if(inner_get_inorder(node->right, number_of_nodes, key_arr, val_arr, index)== FAILURE)
+    if(inner_get_inorder(node->right, num_of_nodes, key_arr, val_arr, index) == FAILURE)
         return FAILURE;
 
     return SUCCESS;
 }
 
 
-StatusType RankTree::get_inorder(int number_of_nodes, int  key_arr[], int val_arr[]) const{
+StatusType RankTree::get_inorder(int num_of_nodes, int  key_arr[], int val_arr[]) const{
     int index = 0;
-    return inner_get_inorder(this->root, number_of_nodes, key_arr, val_arr, &index);
+    return inner_get_inorder(this->root, num_of_nodes, key_arr, val_arr, &index);
 }
 
 
@@ -284,7 +282,6 @@ std::shared_ptr<RankTreeNode> RankTree::create_half_full_avl_tree
                                                           size-1-size_of_left, key_arr, val_arr, index);
 
     new_node->update_details();
-
     return new_node;
 }
 
@@ -336,6 +333,7 @@ void RankTree::removeLeaf(std::shared_ptr<RankTreeNode>* parent_ptr)
 {
     (*parent_ptr) = nullptr;
     size--;
+    number_of_nodes--;
 }
 
 
@@ -346,6 +344,7 @@ void RankTree::removeNodeWithOnlyOneChild(std::shared_ptr<RankTreeNode>* parent_
     {
         (*parent_ptr) = current->left;
         size--;
+        number_of_nodes--;
         return;
     }
     // right child exists
@@ -353,6 +352,7 @@ void RankTree::removeNodeWithOnlyOneChild(std::shared_ptr<RankTreeNode>* parent_
     {
         (*parent_ptr) = current->right;
         size--;
+        number_of_nodes--;
         return;
     }
 }
@@ -397,6 +397,7 @@ void RankTree::removeRoot() {
     if(!(root->right) && !(root->left)){
         root = nullptr;
         size--;
+        number_of_nodes--;
     }
     else if(root->right && root->left){
         removeNodeWithTwoChildren(root);
@@ -410,6 +411,7 @@ void RankTree::removeRoot() {
             root = root->right;
         }
         size--;
+        number_of_nodes--;
     }
 }
 
