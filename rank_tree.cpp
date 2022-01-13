@@ -48,7 +48,7 @@ int RankTree::get_sum(int key){
 
 std::shared_ptr<RankTreeNode> RankTree::inner_add(std::shared_ptr<RankTreeNode> upper_node, std::shared_ptr<RankTreeNode> node_to_put) {
     // This is the first node added to the tree
-    if(size == 0 && node_to_put != nullptr && upper_node == nullptr){
+    if (size == 0 && node_to_put != nullptr && upper_node == nullptr) {
         return node_to_put;
     }
 
@@ -56,19 +56,22 @@ std::shared_ptr<RankTreeNode> RankTree::inner_add(std::shared_ptr<RankTreeNode> 
         return nullptr;
 
     // save the node in the right place (no pun intended)
-    if (*upper_node < *node_to_put)
+    if (*upper_node < *node_to_put) {
         upper_node->right = upper_node->right ? inner_add(upper_node->right, node_to_put) : node_to_put;
-    else if(*upper_node == *node_to_put){
+        upper_node->right->update_details();
+    } else if (*upper_node == *node_to_put) {
         upper_node->value++;
-    }
-    else
+        upper_node->update_details();
+    } else{
         upper_node->left = upper_node->left ? inner_add(upper_node->left, node_to_put) : node_to_put;
+        upper_node->update_details();
+    }
 
     // check the balance factor and do a roll if necessary
     if (upper_node->get_balance_factor() == 2)
-        return upper_node->left->get_balance_factor() >= 0 ? LL_rotate(upper_node) : LR_rotate(upper_node);
+        return (upper_node->left->get_balance_factor() >= 0 ? LL_rotate(upper_node) : LR_rotate(upper_node))->update_details();
     else if (upper_node->get_balance_factor() == -2)
-        return upper_node->right->get_balance_factor() <= 0 ? RR_rotate(upper_node) : RL_rotate(upper_node);
+        return (upper_node->right->get_balance_factor() <= 0 ? RR_rotate(upper_node) : RL_rotate(upper_node))->update_details();
     upper_node->update_details();
     return upper_node;
 }
@@ -412,6 +415,7 @@ void RankTree::removeRoot() {
         }
         size--;
         number_of_nodes--;
+        root->update_details();
     }
 }
 
@@ -422,12 +426,18 @@ std::shared_ptr<RankTreeNode> RankTree::fixBalanceFactor(std::shared_ptr<RankTre
     if (upper_node.get()->key < parent_key)
     {
         upper_node->right = fixBalanceFactor(upper_node->right, parent_key);
+        upper_node->right->update_details();
     }
     else if (upper_node.get()->key > parent_key)
     {
         upper_node->left = fixBalanceFactor(upper_node->left, parent_key);
+        upper_node->left->update_details();
     }
-
+    else{
+        upper_node->update_details();
+        return upper_node;
+    }
+    upper_node->update_details();
     if (upper_node->get_balance_factor() == 2)
     {
         return upper_node->left->get_balance_factor() >= 0 ? LL_rotate(upper_node) : LR_rotate(upper_node);
@@ -438,8 +448,7 @@ std::shared_ptr<RankTreeNode> RankTree::fixBalanceFactor(std::shared_ptr<RankTre
     }
 
     // update the node height
-    upper_node->height = max(upper_node->right? upper_node->right->height: -1,
-                             upper_node->left? upper_node->left->height : -1) + 1;
+    upper_node->update_details();
 
     return upper_node;
 }
@@ -447,6 +456,7 @@ std::shared_ptr<RankTreeNode> RankTree::fixBalanceFactor(std::shared_ptr<RankTre
 
 
 StatusType RankTree::remove(int key){
+
     std::shared_ptr<RankTreeNode> current = get(key);
     if(current == nullptr){
         return FAILURE;
@@ -454,6 +464,7 @@ StatusType RankTree::remove(int key){
     else if(current->value >= 2){
         current->value--;
         root = fixBalanceFactor(root, key);
+        root->update_details();
         return SUCCESS;
     }
     else if(current->key == 0){
@@ -491,8 +502,10 @@ StatusType RankTree::remove(int key){
     else{
         removeNodeWithOnlyOneChild(parent_ptr, current);
     }
-
+    current->update_details();
+    parent->update_details();
     root = fixBalanceFactor(root, parent.get()->key);
+    root->update_details();
     return SUCCESS;
 }
 /*

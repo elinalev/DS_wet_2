@@ -120,7 +120,7 @@ public:
 
     ///TODO: friends for testing, remove after
     friend int main();
-    friend void print_tree(std::shared_ptr<RankTreeNode> node);
+    friend void print_tree(RankTree node);
     friend void TEST_balanceFactor();
     };
 

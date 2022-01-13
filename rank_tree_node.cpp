@@ -36,10 +36,11 @@ void RankTreeNode::get_sum_of_subtree(){
     int right_sum = right? right->sum_of_subtree : 0;
     sum_of_subtree = left_sum + right_sum + ((key) * (value));
 }
-void RankTreeNode::update_details(){
+std::shared_ptr<RankTreeNode> RankTreeNode::update_details(){
     cal_height_non_recursive();
     get_size_of_subtree();
     get_sum_of_subtree();
+    return std::make_shared<RankTreeNode>(*this);
 }
 
 

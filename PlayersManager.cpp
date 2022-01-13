@@ -18,6 +18,7 @@ PlayersManager::PlayersManager(int k, int scale) :
 
 StatusType PlayersManager::MergeGroups(int GroupID1, int GroupID2){
     return groups.unite(groups.find(GroupID1), groups.find(GroupID2));
+
 }
 
 
@@ -38,7 +39,6 @@ StatusType PlayersManager::AddPlayer(int PlayerID, int GroupID, int score){
 
     // update all level trees - will add this in O(1)
     group.all_group_levels->add(0);
-    group.group_scores[score].score_levels->add(0);
     group.group_scores[score].score_levels->add(0);
     scores[score].score_levels->add(0);
     all_levels->add(0);
@@ -73,6 +73,8 @@ StatusType PlayersManager::RemovePlayer(int PlayerID){
 
 
 StatusType PlayersManager::IncreasePlayerIDLevel(int PlayerID, int LevelIncrease){
+    print_tree(*all_levels);
+
     if((PlayerID <= 0) || (LevelIncrease <= 0)){
         return INVALID_INPUT;
     }
@@ -100,12 +102,14 @@ StatusType PlayersManager::IncreasePlayerIDLevel(int PlayerID, int LevelIncrease
     all_levels->add(new_player_level);
 
     player->setLevel(new_player_level);
+    print_tree(*all_levels);
 
     return SUCCESS;
 }
 
 
 StatusType PlayersManager::ChangePlayerIDScore(int PlayerID, int NewScore){
+
     if((PlayerID <= 0) || (NewScore <= 0) || (NewScore > scale)){
         return INVALID_INPUT;
     }
@@ -126,7 +130,6 @@ StatusType PlayersManager::ChangePlayerIDScore(int PlayerID, int NewScore){
     scores[NewScore].score_levels->add(player_level);
 
     player->setScore(NewScore);
-
     return SUCCESS;
 
 }
@@ -171,11 +174,29 @@ StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int
     number_of_players_between_level_with_score = getNumberOfPlayersWithScoreUntilLevel(score_levels, higherLevel) -
             getNumberOfPlayersWithScoreUntilLevel(score_levels, lowerLevel-1);
 
-    *players = (double(number_of_players_between_level_with_score) * 100 / total_number_of_players_between_levels);
+    *players = (double)(number_of_players_between_level_with_score) * 100 / (double)total_number_of_players_between_levels;
 
     return SUCCESS;
 }
 
+
+int space = 0;
+void print_tree_aux(std::shared_ptr<RankTreeNode> node){
+    if(node == nullptr)
+        return;
+    space++;
+    print_tree_aux(node->left);
+    for (int i = 0; i< space*10; i++)
+        printf(" ");
+    printf("key=%d value=%d sum=%d size=%d\n", node->key, node->value, node->sum_of_subtree, node->size_of_subtree);
+    print_tree_aux(node->right);
+    space--;
+
+}
+
+void print_tree(RankTree tree){
+    print_tree_aux(tree.root);
+}
 
 StatusType PlayersManager::AverageHighestPlayerLevelByGroup(int GroupID, int m, double * level) {
     if(!m || GroupID < 0 || GroupID > groups_count || m <= 0)
@@ -189,7 +210,6 @@ StatusType PlayersManager::AverageHighestPlayerLevelByGroup(int GroupID, int m, 
     }
     if (levels->get_size() - m < 0)
         return FAILURE;
-
     *level = (double) levels->sum_of_best_m(m) / (double)(m);
     return SUCCESS;
 }
