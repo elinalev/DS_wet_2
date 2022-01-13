@@ -1264,12 +1264,12 @@
 \begin_inset Formula $score$
 \end_inset
 
- הדרוש, ונמצא את הנוד עם הרמה המתאימה בסיבוכיות 
+ הדרוש, ונמצא את הצומת עם הרמה המתאימה בסיבוכיות 
 \begin_inset Formula $O(logn)$
 \end_inset
 
 .
- המונה של נוד זה הוא מספר השחקנים מהרמה הדרושה מה
+ המונה של צומת זה הוא מספר השחקנים מהרמה הדרושה מה
 \begin_inset Formula $score$
 \end_inset
 
@@ -1331,7 +1331,7 @@
 \uwave default
 \noun default
 \color inherit
-אם הנוד לא נמצא, כלומר אין שחקנים מהרמה וה
+אם הצומת לא נמצא, כלומר אין שחקנים מהרמה וה
 \begin_inset Formula $score$
 \end_inset
 
@@ -1344,7 +1344,7 @@
 \end_inset
 
  שחקנים מהרמה הדרושה עם התוצאה הדרושה, כלומר 
-\begin_inset Formula $HigherBoundPlayers=min(m-too\_big,relevant\_palyers)$
+\begin_inset Formula $HigherBoundPlayers=min(m-too\_big,relevant\_players)$
 \end_inset
 
 .
