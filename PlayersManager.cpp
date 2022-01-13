@@ -73,8 +73,6 @@ StatusType PlayersManager::RemovePlayer(int PlayerID){
 
 
 StatusType PlayersManager::IncreasePlayerIDLevel(int PlayerID, int LevelIncrease){
-    print_tree(*all_levels);
-
     if((PlayerID <= 0) || (LevelIncrease <= 0)){
         return INVALID_INPUT;
     }
@@ -102,7 +100,6 @@ StatusType PlayersManager::IncreasePlayerIDLevel(int PlayerID, int LevelIncrease
     all_levels->add(new_player_level);
 
     player->setLevel(new_player_level);
-    print_tree(*all_levels);
 
     return SUCCESS;
 }

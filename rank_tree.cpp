@@ -147,7 +147,7 @@ int RankTree::sum_of_best_m(int m) {
 }
 
 int RankTree::inner_sum_of_best_m(std::shared_ptr<RankTreeNode> nod, int m){
-    if(m > size || m < 0)
+    if(m > size+ *zero || m < 0)
         return -1;
     if(!nod)
         return 0;
@@ -367,6 +367,9 @@ void RankTree::removeNodeWithTwoChildren(std::shared_ptr<RankTreeNode> node_to_r
     auto replacement_node = node_to_remove->right;
     auto replacement_node_parent = node_to_remove;
 
+    auto fix = node_to_remove->right;
+    auto fix_parent = node_to_remove;
+
     while(replacement_node->left){
         replacement_node_parent = replacement_node;
         replacement_node = replacement_node->left;
@@ -392,6 +395,15 @@ void RankTree::removeNodeWithTwoChildren(std::shared_ptr<RankTreeNode> node_to_r
     else{
         removeNodeWithOnlyOneChild(replacement_node_parent_ptr, replacement_node);
     }
+
+    //fixing nodes height
+    while(fix){
+        fix->update_details();
+        fix_parent->update_details();
+        fix_parent = fix;
+        fix = fix->left;
+    }
+
 }
 
 
