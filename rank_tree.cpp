@@ -48,7 +48,7 @@ int RankTree::get_sum(int key){
 
 std::shared_ptr<RankTreeNode> RankTree::inner_add(std::shared_ptr<RankTreeNode> upper_node, std::shared_ptr<RankTreeNode> node_to_put) {
     // This is the first node added to the tree
-    if (size == 0 && node_to_put != nullptr && upper_node == nullptr) {
+    if (number_of_nodes == 0 && node_to_put != nullptr && upper_node == nullptr) {
         return node_to_put;
     }
 
@@ -116,14 +116,12 @@ RankTree RankTree::merge(const RankTree& tree1, const RankTree& tree2){
     int size = merge_arr(key_arr, key_arr1, key_arr2, val_arr, val_arr1, val_arr2, size1, size2);
     RankTree tree;
     tree.root = create_half_full_avl_tree(find_pow_of_2(size)-1, size, key_arr, val_arr, &index);
-    tree.size = tree.number_of_nodes = size;
-    if(*(tree1.zero)==0 && *(tree2.zero)==0)
-        tree.size -= 1;
+    tree.number_of_nodes = size;
     tree.zero = &(tree.get(0))->value;
     return tree;
 }
 std::shared_ptr<RankTreeNode> RankTree::find_nod_of_rank_m(int m){
-    if(m < 0 || m > size)
+    if(m < 0 || m > get_size())
         return nullptr;
     return inner_find_nod_of_rank_m(root, m);
 }
@@ -143,12 +141,12 @@ std::shared_ptr<RankTreeNode> RankTree::inner_find_nod_of_rank_m(std::shared_ptr
 }
 
 int RankTree::sum_of_best_m(int m) {
+    if(m > root->size_of_subtree + *zero || m < 0)
+        return -1;
     return inner_sum_of_best_m(root, m);
 }
 
 int RankTree::inner_sum_of_best_m(std::shared_ptr<RankTreeNode> nod, int m){
-    if(m > size+ *zero || m < 0)
-        return -1;
     if(!nod)
         return 0;
     int num_from_left_and_this = m;
@@ -168,7 +166,6 @@ int RankTree::inner_sum_of_best_m(std::shared_ptr<RankTreeNode> nod, int m){
 StatusType RankTree::add_0(){
     if(zero){
         (*zero)++;
-        size++;
     } else
         return FAILURE;
     return SUCCESS;
@@ -189,7 +186,6 @@ StatusType RankTree::add(int key){
     }catch(const std::bad_alloc&){
         return ALLOCATION_ERROR;
     }
-    size++;
     return SUCCESS;
 }
 
@@ -335,7 +331,6 @@ std::shared_ptr<RankTreeNode> RankTree::LR_rotate(std::shared_ptr<RankTreeNode> 
 void RankTree::removeLeaf(std::shared_ptr<RankTreeNode>* parent_ptr)
 {
     (*parent_ptr) = nullptr;
-    size--;
     number_of_nodes--;
 }
 
@@ -346,7 +341,6 @@ void RankTree::removeNodeWithOnlyOneChild(std::shared_ptr<RankTreeNode>* parent_
     if(!(current->right) && current->left)
     {
         (*parent_ptr) = current->left;
-        size--;
         number_of_nodes--;
         return;
     }
@@ -354,7 +348,6 @@ void RankTree::removeNodeWithOnlyOneChild(std::shared_ptr<RankTreeNode>* parent_
     if(!(current->left) && current->right)
     {
         (*parent_ptr) = current->right;
-        size--;
         number_of_nodes--;
         return;
     }
@@ -411,7 +404,6 @@ void RankTree::removeNodeWithTwoChildren(std::shared_ptr<RankTreeNode> node_to_r
 void RankTree::removeRoot() {
     if(!(root->right) && !(root->left)){
         root = nullptr;
-        size--;
         number_of_nodes--;
     }
     else if(root->right && root->left){
@@ -425,7 +417,6 @@ void RankTree::removeRoot() {
         else{
             root = root->right;
         }
-        size--;
         number_of_nodes--;
         root->update_details();
     }

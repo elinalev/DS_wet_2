@@ -13,7 +13,6 @@ private:
     /// properties
     std::shared_ptr<RankTreeNode> root;
     int* zero;
-    int size;
     int number_of_nodes;
 
     /// functions
@@ -102,7 +101,7 @@ public:
     int get_sum(int key);
     static RankTree merge(const RankTree& tree1, const RankTree& tree2);
     // constructors
-    RankTree(): root(std::make_shared<RankTreeNode>(0)), zero(&(root->value)), size(0), number_of_nodes(1){};
+    RankTree(): root(std::make_shared<RankTreeNode>(0)), zero(&(root->value)), number_of_nodes(1){};
 
     // basic tree operations
     StatusType add(int  key);

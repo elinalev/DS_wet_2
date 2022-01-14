@@ -142,8 +142,7 @@ StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int
         return INVALID_INPUT;
     }
     if(score > scale || score <= 0){
-        *players = 0;
-        return SUCCESS;
+        return FAILURE;
     }
     std::shared_ptr<RankTree> score_levels;
     std::shared_ptr<RankTree> levels;
@@ -164,13 +163,11 @@ StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int
     total_number_of_players_between_levels = getNumberOfPlayersWithScoreUntilLevel(levels, higherLevel) -
             getNumberOfPlayersWithScoreUntilLevel(levels, lowerLevel-1);
     if(total_number_of_players_between_levels == 0){
-        *players = 0;
-        return SUCCESS;
+        return FAILURE;
     }
 
     number_of_players_between_level_with_score = getNumberOfPlayersWithScoreUntilLevel(score_levels, higherLevel) -
             getNumberOfPlayersWithScoreUntilLevel(score_levels, lowerLevel-1);
-
     *players = (double)(number_of_players_between_level_with_score) * 100 / (double)total_number_of_players_between_levels;
 
     return SUCCESS;
