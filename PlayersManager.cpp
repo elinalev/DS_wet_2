@@ -162,7 +162,7 @@ StatusType PlayersManager::GetPercentOfPlayersWithScoreInBounds(int GroupID, int
 
     total_number_of_players_between_levels = getNumberOfPlayersWithScoreUntilLevel(levels, higherLevel) -
             getNumberOfPlayersWithScoreUntilLevel(levels, lowerLevel-1);
-    if(total_number_of_players_between_levels == 0){
+    if(total_number_of_players_between_levels <= 0){
         return FAILURE;
     }
 
