@@ -362,6 +362,26 @@
  השונים.
 \end_layout
 
+\begin_layout Standard
+לכן לסיכום: אם יש 
+\begin_inset Formula $k$
+\end_inset
+
+ קבוצות ו 
+\begin_inset Formula $n$
+\end_inset
+
+ שחקנים סה
+\begin_inset Quotes erd
+\end_inset
+
+כ: סיבוכיות המקום היא 
+\begin_inset Formula $O(n+k)$
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Section*
 פונקציות
 \end_layout
@@ -438,7 +458,11 @@
 \begin_inset Formula $k$
 \end_inset
 
- קבוצות.
+ קבוצות, לכן סיבוכיות 
+\begin_inset Formula $O(k)$
+\end_inset
+
+.
  בנוסף פעולות ב
 \begin_inset Formula $O(1)$
 \end_inset
@@ -469,7 +493,7 @@
 \begin_inset Formula $O(log^{*}(k))$
 \end_inset
 
-
+ )משוערך ביחד עם שאר הפעולות על קבוצות, פירוט בסוף הקובץ(
 \end_layout
 
 \begin_layout Enumerate
@@ -535,7 +559,7 @@
 \begin_inset Formula $O(n)$
 \end_inset
 
- באלגוריתם שלמדנו בתרגול.
+ )מקרה גרוע( באלגוריתם שלמדנו בתרגול.
  נבצע את אותה הפעולה לכל 
 \begin_inset Formula $score$
 \end_inset
@@ -602,12 +626,29 @@
 \begin_inset Formula $scale$
 \end_inset
 
- קבוע ולכן הסיבוכיות 
+ חסום ע
+\begin_inset Quotes erd
+\end_inset
+
+י קבוע ולכן הסיבוכיות 
 \begin_inset Formula $O(n)$
 \end_inset
 
 .
  
+\end_layout
+
+\begin_layout Enumerate
+סה
+\begin_inset Quotes erd
+\end_inset
+
+כ סיבוכיות 
+\begin_inset Formula $O(log^{*}(k)+n)$
+\end_inset
+
+.
+ משוערך.
 \end_layout
 
 \end_deeper
@@ -633,6 +674,7 @@
 \end_inset
 
 (.
+ )ממוצע על הקלט(.
 \end_layout
 
 \begin_layout Enumerate
@@ -644,7 +686,7 @@
 \begin_inset Formula $O(log^{*}k)$
 \end_inset
 
-
+ )משוערך ביחד עם שאר הפעולות על קבוצות, פירוט בסוף הקובץ(.
 \end_layout
 
 \begin_layout Enumerate
@@ -724,6 +766,18 @@
 
 \end_layout
 
+\begin_layout Enumerate
+סה
+\begin_inset Quotes erd
+\end_inset
+
+כ סיבוכיות 
+\begin_inset Formula $(log^{*}k)$
+\end_inset
+
+ משוערך בממוצע על הקלט.
+\end_layout
+
 \end_deeper
 \begin_layout Enumerate
 \begin_inset Formula $removePlayer$
@@ -742,7 +796,7 @@
 \begin_inset Formula $O(1)$
 \end_inset
 
-.
+.)ממוצע על הקלט(.
 \end_layout
 
 \begin_layout Enumerate
@@ -754,7 +808,7 @@
 \begin_inset Formula $O(log^{*}k)$
 \end_inset
 
-
+ )משוערך ביחד עם שאר הפעולות על קבוצות, פירוט בסוף הקובץ(.
 \end_layout
 
 \begin_layout Enumerate
@@ -764,7 +818,7 @@
 \end_inset
 
 .
- נבצע ב
+ נבצע את הפעולה הזו ב
 \begin_inset Formula $all\_group\_levels$
 \end_inset
 
@@ -793,7 +847,19 @@
 \begin_inset Formula $hash\_table$
 \end_inset
 
-(.
+(.)ממוצע על הקלט(.
+\end_layout
+
+\begin_layout Enumerate
+סה
+\begin_inset Quotes erd
+\end_inset
+
+כ סיבוכיות 
+\begin_inset Formula $O(log^{*}k+logn)$
+\end_inset
+
+ משוערך בממוצע על הקלט.
 \end_layout
 
 \end_deeper
@@ -831,7 +897,7 @@
 \end_inset
 
 .
- 
+ )משוערך ביחד עם שאר הפעולות על קבוצות, פירוט בסוף הקובץ(.
 \end_layout
 
 \begin_layout Enumerate
@@ -841,25 +907,37 @@
 \end_inset
 
 .
- נקדם את המונה המתאים לרמה החדשה של השחקן ב 
+ נקדם את המונה המתאים לרמה החדשה של השחקן אם אין צומת המתאים לרמה החדשה
+ נוסיף אותה לעץ 
 \begin_inset Formula $O(logn)$
 \end_inset
 
 .
- נבצע ב
+ נבצע את הפעולה ב
 \begin_inset Formula $all\_group\_levels$
 \end_inset
 
- ובעץ המתאים ל
+, בעץ המתאים ל
 \begin_inset Formula $score$
 \end_inset
 
- של השחקן.
- וב
+ של השחקן וב
 \begin_inset Formula $all\_levels$
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Enumerate
+סה
+\begin_inset Quotes erd
+\end_inset
+
+כ סיבוכיות 
+\begin_inset Formula $O(log^{*}k+logn)$
+\end_inset
+
+ משוערך בממוצע על הקלט.
 \end_layout
 
 \end_deeper
@@ -939,7 +1017,7 @@
 \end_inset
 
 .
- 
+ )משוערך ביחד עם שאר הפעולות על קבוצות, פירוט בסוף הקובץ(.
 \end_layout
 
 \begin_layout Enumerate
@@ -956,25 +1034,32 @@
 \begin_inset Formula $score$
 \end_inset
 
- החדש 
+ החדש, אם לא היה קיים צומת עם הרמה - נוסיף אותו לעץ 
 \begin_inset Formula $O(logn)$
 \end_inset
 
 .
- בעץ המתאים ל
-\begin_inset Formula $score$
+ נבצע את הפעולה לעיל על 
+\begin_inset Formula $scores$
 \end_inset
 
- של השחקן ב 
+ ועל 
 \begin_inset Formula $group\_scores$
 \end_inset
 
 .
- נבצע את אותה הפעולה על העץ 
-\begin_inset Formula $scores$
+\end_layout
+
+\begin_layout Enumerate
+סה
+\begin_inset Quotes erd
 \end_inset
 
-.
+כ סיבוכיות 
+\begin_inset Formula $O(log^{*}k+logn)$
+\end_inset
+
+ משוערך בממוצע על הקלט.
 \end_layout
 
 \end_deeper
@@ -1028,7 +1113,7 @@
 \begin_inset Formula $O(log^{*}k)$
 \end_inset
 
-
+ )משוערך ביחד עם שאר הפעולות על קבוצות, פירוט בסוף הקובץ(.
 \end_layout
 
 \begin_layout Enumerate
@@ -1071,7 +1156,11 @@
 0
 \numeric off
 , הפונקציה תסכום גם את מספר זה)יש לנו מצביע אליו(.
- ב
+ סה
+\begin_inset Quotes erd
+\end_inset
+
+כ ב
 \begin_inset Formula $O(logn)$
 \end_inset
 
@@ -1101,6 +1190,46 @@
 \end_inset
 
  ונחסר בין התוצאות.
+\end_layout
+
+\begin_layout Enumerate
+נבצע את שלב )ג( עבור 
+\begin_inset Formula $all\_group\_levels$
+\end_inset
+
+)או עבור 
+\begin_inset Formula $all\_levels$
+\end_inset
+
+ אם 
+\begin_inset Formula $group\_id==0$
+\end_inset
+
+(,)כעת קיבלנו כמה שחקנים נמצאים ברמה הדרושה( ועבור העץ המתאים ל
+\begin_inset Formula $score$
+\end_inset
+
+ הדרוש )כעת קיבלנו כמה שחקנים עם ה
+\begin_inset Formula $score$
+\end_inset
+
+ הדרוש ברמה הדרושה(.
+\end_layout
+
+\begin_layout Enumerate
+נחלק בין התוצאות.
+\end_layout
+
+\begin_layout Enumerate
+סה
+\begin_inset Quotes erd
+\end_inset
+
+כ מספר סופי של פעמים קראנו לפונקציית העזר, ולכן 
+\begin_inset Formula $O(log^{*}k+logn)$
+\end_inset
+
+ משוערך.
 \end_layout
 
 \end_deeper
@@ -1154,7 +1283,7 @@
 \begin_inset Formula $O(log^{*}k)$
 \end_inset
 
-
+ )משוערך ביחד עם שאר הפעולות על קבוצות, פירוט בסוף הקובץ(.
 \end_layout
 
 \begin_layout Enumerate
@@ -1168,7 +1297,7 @@
 \begin_inset Formula $O(logn)$
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Enumerate
@@ -1180,12 +1309,40 @@
  
 \end_layout
 
+\begin_layout Enumerate
+סה
+\begin_inset Quotes erd
+\end_inset
+
+כ סיבוכיות 
+\begin_inset Formula $O(log^{*}k+logn)$
+\end_inset
+
+ משוערך.
+\end_layout
+
 \end_deeper
 \begin_layout Enumerate
 בונוס:
 \end_layout
 
 \begin_deeper
+\begin_layout Enumerate
+נמצא את הקבוצה הרצויה ב
+\begin_inset Formula $O(1)$
+\end_inset
+
+ אם 
+\begin_inset Formula $GroupID==0$
+\end_inset
+
+, או ב
+\begin_inset Formula $O(log^{*}k)$
+\end_inset
+
+ אחרת, )משוערך ביחד עם שאר הפעולות על קבוצות, פירוט בסוף הקובץ(.
+\end_layout
+
 \begin_layout Enumerate
 נמצא בעץ הרמות של הקבוצה)או הכללי אם 
 \begin_inset Formula $GroupID==0$
@@ -1424,6 +1581,18 @@
 .
 \end_layout
 
+\begin_layout Enumerate
+סה
+\begin_inset Quotes erd
+\end_inset
+
+כ סיבוכיות 
+\begin_inset Formula $O(log^{*}k+logn)$
+\end_inset
+
+
+\end_layout
+
 \end_deeper
 \end_deeper
 \begin_layout Enumerate
@@ -1437,8 +1606,98 @@
 \begin_layout Enumerate
 נשחרר את כל הזיכרון, חישבנו כבר כי הוא תלוי לינארית במספר הקבוצות ובמספר
  השחקנים.
+ ולכן סיבוכיות הזמן גם כן.
 \end_layout
 
 \end_deeper
+\begin_layout Itemize
+חישוב הסיבוכיות המשוערכת של הפעולות על הקבוצות ב :
+\begin_inset Formula 
+\begin{align*}
+mergeGroups,\ averageHighestPlayerLevelByGroup,\\
+\ getPercentOfPlayersWithScoreInBounds,\\
+\ changePlayerIdScore,\ increasePlayerIDLevel,\\
+\ removePlayer,\ addPlayer,\ getPlayersBound\\
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+כל פעולה לעיל, כוללת מספר סופי וחסום של פעולות 
+\begin_inset Formula $union,find$
+\end_inset
+
+ ולכן לכל 
+\begin_inset Formula $m$
+\end_inset
+
+ פעולות כאלו קיים 
+\begin_inset Formula $a$
+\end_inset
+
+ קבוע, כך שיקרו לכל היותר 
+\begin_inset Formula $a*m$
+\end_inset
+
+ פעולות 
+\begin_inset Formula $union$
+\end_inset
+
+ ו 
+\begin_inset Formula $find$
+\end_inset
+
+, ולכן הסיבוכיות חסומה ע
+\begin_inset Quotes erd
+\end_inset
+
+י 
+\begin_inset Formula $O(log^{*}k)$
+\end_inset
+
+ כמו שראינו בהרצאה.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+כל הפעולות על 
+\begin_inset Formula $hash\_table$
+\end_inset
+
+ של 
+\begin_inset Formula $players$
+\end_inset
+
+, באופן דומה, כוללות מספר סופי וחסום של חיפוש, הכנסה והוצאה, ולכן לכל 
+\begin_inset Formula $m$
+\end_inset
+
+ פעולות כאלו קיים קבוע 
+\begin_inset Formula $b$
+\end_inset
+
+ כך שיבוצעו לכל היותר 
+\begin_inset Formula $b*m$
+\end_inset
+
+ פעולות חיפוש הכנסה והוצאה ולכן הסיבוכיות חסומה ע
+\begin_inset Quotes erd
+\end_inset
+
+י הסיבוכיות של 
+\begin_inset Formula $hash\_table$
+\end_inset
+
+ כפי שנלמדה בהרצאה- 
+\begin_inset Formula $O(1)$
+\end_inset
+
+ משוערך בממוצע על הקלט.
+\end_layout
+
 \end_body
 \end_document
