@@ -245,7 +245,7 @@ StatusType PlayersManager::GetPlayersBound(int GroupID, int score, int m,
         *LowerBoundPlayers = *HigherBoundPlayers = 0;
         return SUCCESS;
     }
-    int relevant_players = score_levels->get_rank(nod->key ) - score_levels->get_rank(nod->key-1);
+    int relevant_players = score_levels->get_rank(nod->key) - score_levels->get_rank(nod->key-1);
 
     *HigherBoundPlayers = min(m-too_big, relevant_players);
     *LowerBoundPlayers = min(m-too_big-(good-relevant_players), relevant_players);

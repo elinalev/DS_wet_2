@@ -30,7 +30,7 @@ int RankTree::inner_get_rank(int key, std::shared_ptr<RankTreeNode> node){
 }
 
 int RankTree::get_rank(int key){
-    return *zero + inner_get_rank(key, root);
+    return key < 0? 0 : *zero + inner_get_rank(key, root);
 }
 
 int RankTree::inner_get_sum(int key, std::shared_ptr<RankTreeNode> node){
@@ -121,16 +121,15 @@ RankTree RankTree::merge(const RankTree& tree1, const RankTree& tree2){
     return tree;
 }
 std::shared_ptr<RankTreeNode> RankTree::find_nod_of_rank_m(int m){
-    print_tree(*this);
     if(m < 0 || m > get_size())
         return nullptr;
-    return inner_find_nod_of_rank_m(root, m);
+    return m - * zero < 0 ? get(0) : inner_find_nod_of_rank_m(root, m - *zero);
 }
 std::shared_ptr<RankTreeNode> RankTree::inner_find_nod_of_rank_m(std::shared_ptr<RankTreeNode> nod, int m){
     if(!nod)
         return nullptr;
     if(!nod->left){
-        if(nod->value < m)
+        if(nod->value < m || nod->value == 0)
             return inner_find_nod_of_rank_m(nod->right, m - nod->value);
         return nod;
     }
