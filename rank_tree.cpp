@@ -121,6 +121,7 @@ RankTree RankTree::merge(const RankTree& tree1, const RankTree& tree2){
     return tree;
 }
 std::shared_ptr<RankTreeNode> RankTree::find_nod_of_rank_m(int m){
+    print_tree(*this);
     if(m < 0 || m > get_size())
         return nullptr;
     return inner_find_nod_of_rank_m(root, m);
