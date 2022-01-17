@@ -5,7 +5,7 @@
 #include "hash_table.h"
 #include "player.h"
 #include "rank_tree.h"
-#include "union_find/union_find.h"
+#include "union_find.h"
 
 class PlayersManager{
     // save all the players
@@ -34,6 +34,7 @@ public:
     StatusType AverageHighestPlayerLevelByGroup(int GroupID, int m, double * level);
     StatusType GetPlayersBound(int GroupID, int score, int m,
                                int * LowerBoundPlayers, int * HigherBoundPlayers);
+    ~PlayersManager();
 };
 
 #endif //DS_WET_2_PLAYERSMANAGER_H

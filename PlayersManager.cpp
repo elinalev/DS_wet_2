@@ -253,3 +253,7 @@ StatusType PlayersManager::GetPlayersBound(int GroupID, int score, int m,
         *LowerBoundPlayers = 0;
     return SUCCESS;
 }
+
+PlayersManager::~PlayersManager(){
+    delete[] scores;
+}
